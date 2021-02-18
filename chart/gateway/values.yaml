@@ -1,0 +1,63 @@
+replicaCount: 2
+
+image:
+  repository: gcr.io/virtru-public/staging/gateway
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "2.16.1"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: LoadBalancer
+  port: 2525
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: gateway-development.preprod.virtru.com
+
+ingress:
+  enabled: false
+
+resources: {}
+  # limits:
+  #   cpu: 500m
+  #   memory: 500Mi
+  # requests:
+  #   cpu: 500m
+  #   memory: 500Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+gatewayAccountsUrl: https://api.virtru.com/accounts
+gatewayAcmUrl: https://api.virtru.com/acm
+gatewayRemoteContentBaseUrl: https://secure.virtru.com/start
+gatewayHostname: my-domain.example.com
+gatewayApiTokenName: my-token
+gatewayApiSecret: my-secret
+gatewayMode: encrypt-everything
+gatewayOrganizationName: 'my-organization'
+gatewayTopology: outbound
+gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'

@@ -1,0 +1,79 @@
+x-google-marketplace:
+#* schema level properties
+  schemaVersion: v2
+
+  applicationApiVersion: v1beta1
+  # The published version is required and MUST match the tag
+  # of the deployer image
+  publishedVersion: '$TAG' # latest published image tag 
+  publishedVersionMetadata:
+    releaseNote: >-
+      A first release.
+  images:
+    '':  # Primary image has no name.
+      properties:
+        image.repository:
+          type: REPO_WITH_REGISTRY
+        image.tag:
+          type: TAG
+  
+  clusterConstraints:
+    k8sVersion: ">=1.16.0"
+    assistedClusterCreation:
+      type: STRICT
+      gke:
+       # todo tune these values to be more appropriate
+        nodePool:
+        - numNodes: 2 
+          machineType: e2-standard-2
+    resources:
+    - replicas: 2
+      requests:
+        cpu: 300m
+        memory: 250Mi
+      affinity:
+        simpleNodeAffinity:
+          type: REQUIRE_MINIMUM_NODE_COUNT
+          minimumNodeCount: 1
+    istio:
+      type: UNSUPPORTED
+
+#* application properties
+properties:
+  name:
+    type: string
+    x-google-marketplace:
+      type: NAME
+  namespace:
+    type: string
+    x-google-marketplace:
+      type: NAMESPACE
+  gatewayHostname:
+    type: string
+    x-google-marketplace:
+      type: STRING
+  gatewayApiTokenName:
+    type: string
+    x-google-marketplace:
+      type: STRING
+  gatewayApiSecret:
+    type: string
+    x-google-marketplace:
+      type: STRING
+  primaryMailingDomain:
+    type: string
+    x-google-marketplace:
+      type: STRING
+  amplitudeToken:
+    type: string
+    x-google-marketplace:
+      type: STRING
+    
+required:
+- name
+- namespace
+- gatewayHostname
+- gatewayApiTokenName
+- gatewayApiSecret
+- primaryMailingDomain
+- amplitudeToken

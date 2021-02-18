@@ -1,0 +1,32 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app: gateway
+  name: {{ .Chart.Name }}
+data:
+  GATEWAY_ACCOUNTS_URL: {{ .Values.gatewayAccountsUrl }}
+  GATEWAY_ACM_URL:  {{ .Values.gatewayAcmUrl }}
+  GATEWAY_API_TOKEN_NAME:  {{ .Values.gatewayApiTokenName }}
+  GATEWAY_HOSTNAME: {{ .Values.gatewayHostname }}
+  GATEWAY_MODE: {{ .Values.gatewayMode }}
+  GATEWAY_ORGANIZATION_DOMAIN:  {{ .Values.gatewayOrganizationName }}
+  GATEWAY_TOPOLOGY: {{ .Values.gatewayTopology }}
+  GATEWAY_REMOTE_CONTENT_BASE_URL: {{ .Values.gatewayRemoteContentBaseUrl }}
+  GATEWAY_PROXY_PROTOCOL: "0"
+  GATEWAY_TRANSPORT_MAPS: '*=>[smtp-relay.gmail.com]:587'
+  GATEWAY_RELAY_ADDRESSES: 0.0.0.0/0
+  GATEWAY_SMTP_SECURITY_LEVEL: opportunistic
+  GATEWAY_SMTP_USE_TLS: "1"
+  GATEWAY_SMTPD_SECURITY_LEVEL: opportunistic
+  GATEWAY_SMTPD_USE_TLS: "1"
+  GATEWAY_VERBOSE_LOGGING: "0"
+  MAX_BACKOFF_TIME: 45s
+  MAX_QUEUE_LIFETIME: 5m
+  MIN_BACKOFF_TIME: 30s
+  GATEWAY_ENCRYPTION_KEY_PROVIDER: CKS
+  GATEWAY_CKS_SESSION_KEY_EXPIRY_IN_MINS: "360"
+  QUEUE_RUN_DELAY: "\t 30s"
+
+
+
