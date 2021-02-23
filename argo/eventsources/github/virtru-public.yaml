@@ -1,0 +1,79 @@
+# Info on GitHub Webhook: https://developer.github.com/v3/repos/hooks/#create-a-hook
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: github-virtru-public
+spec:
+  service:
+    ports:
+      - port: 12000
+        targetPort: 12000
+  github:
+    gitPush:
+      owner: virtru
+      repository: virtru-public
+      # Github will send events to following port and endpoint
+      webhook:
+        # endpoint to listen to events on
+        endpoint: /gitPush
+        # port to run internal HTTP server on
+        port: "12000"
+        # HTTP request method to allow. In this case, only POST requests are accepted
+        method: POST
+        # url the event-source will use to register at Github.
+        # This url must be reachable from outside the cluster.
+        # The name for the service is in `<event-source-name>-eventsource-svc` format.
+        # You will need to create an Ingress or Openshift Route for the event-source service so that it can be reached from GitHub.
+        url: https://github-virtru-public-eventsource-svc.mgmt.virtru.com
+      # type of events to listen to.
+      # following listens to everything, hence *
+      # You can find more info on https://developer.github.com/v3/activity/events/types/
+      events:
+        - 'push'
+
+      # apiToken refers to K8s secret that stores the github api token
+      # if apiToken is provided controller will create webhook on GitHub repo
+      # +optional
+      apiToken:
+        # Name of the K8s secret that contains the access token
+        name: virtru-github-secrets
+        # Key within the K8s secret whose corresponding value (must be base64 encoded) is access token
+        key: PERSONAL_ACCESS_TOKEN
+      webhookSecret:
+        # Name of the K8s secret that contains the hook secret
+        name: virtru-github-secrets
+        # Key within the K8s secret whose corresponding value (must be base64 encoded) is hook secret
+        key: WEBHOOK_SECRET
+
+      # type of the connection between event-source and Github.
+      # You should set it to false to avoid man-in-the-middle and other attacks.
+      insecure: false
+      # Determines if notifications are sent when the webhook is triggered
+      active: true
+      # The media type used to serialize the payloads
+      contentType: json
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  name: github-virtru-public-eventsource-svc
+  namespace: argo-events
+  labels:
+    run: github-virtru-public-eventsource-svc
+spec:
+  rules:
+    - host: github-virtru-public-eventsource-svc.mgmt.virtru.com
+      http:
+        paths:
+          - backend:
+              serviceName: github-virtru-public-eventsource-svc
+              servicePort: 12000
+            path: /gitPush
+  tls:
+    - hosts:
+        - github-virtru-public-eventsource-svc.mgmt.virtru.com
+      secretName: github-virtru-public-eventsource-svc-secret
+

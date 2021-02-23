@@ -1,0 +1,88 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: github-virtru-public
+spec:
+  template:
+    serviceAccountName: argo-events-sa
+  dependencies:
+    - name: github-payload
+      eventSourceName: github-virtru-public
+      eventName: gitPush
+  triggers:
+    - template:
+        name: github-workflow-trigger
+        k8s:
+          group: argoproj.io
+          version: v1alpha1
+          resource: workflows
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: virtru-public-cicd-
+              spec:
+                entrypoint: virtru-public-pipeline
+                serviceAccountName: argo-events-sa
+                arguments:
+                  parameters:
+                  - name: actualBranch
+                    value: replaced-via-triggers-k8s-param-0
+                  - name: defaultBranch
+                    value: replaced-via-triggers-k8s-param-1
+                  - name: dockerTag
+                    value: replaced-via-triggers-k8s-param-2
+                  - name: gitRepoUrl
+                    value: "https://github.com/virtru/virtru-public.git"
+                  - name: gitRepoName
+                    value: "virtru-public"
+                  - name: buildImage
+                    value: 833190184321.dkr.ecr.us-west-2.amazonaws.com/kubefirst-builder:0.6
+                  - name: appName
+                    value: "virtru-public"
+                templates:
+                - name: virtru-public-pipeline
+                  serviceAccountName: argo-events-sa
+                  steps:
+                  - - name: check-branch
+                      templateRef:
+                        name: check-branch
+                        template: check-branch
+                        clusterScope: true 
+                      arguments:
+                        parameters:
+                        - name: expectedBranch
+                          value: "{{workflow.parameters.defaultBranch}}"
+                        - name: actualBranch
+                          value: "{{workflow.parameters.actualBranch}}"
+                        - name: buildImage
+                          value: "{{workflow.parameters.buildImage}}"
+                  - - name: checkout
+                      templateRef:
+                        name: cwft-get-source-v2
+                        template: get-source-v2
+                        clusterScope: true 
+                      arguments:
+                        parameters:
+                        - name: gitRepoUrl
+                          value: "{{workflow.parameters.gitRepoUrl}}"
+                        - name: defaultBranch
+                          value: "{{workflow.parameters.defaultBranch}}"
+                        - name: gitRepoName
+                          value: "{{workflow.parameters.gitRepoName}}"
+          parameters:
+            - src:
+                dependencyName: github-payload
+                dataKey: body.ref
+              dest: spec.arguments.parameters.0.value # todo see if you can reference name not index
+            - src:
+                dependencyName: github-payload
+                dataKey: body.repository.default_branch
+              dest: spec.arguments.parameters.1.value # todo see if you can reference name not index    
+            - src:
+                dependencyName: github-payload
+                dataKey: body.after
+              dest: spec.arguments.parameters.2.value # todo see if you can reference name not index
+
