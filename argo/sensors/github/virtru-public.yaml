@@ -72,6 +72,30 @@ spec:
                           value: "{{workflow.parameters.defaultBranch}}"
                         - name: gitRepoName
                           value: "{{workflow.parameters.gitRepoName}}"
+                  - - name: publish-image-to-gcr
+                      templateRef:
+                        name: cwft-publish-image-to-gcr-virtru-public
+                        template: publish-image-to-gcr
+                        clusterScope: true
+                      arguments:
+                        artifacts:
+                        - name: repo-source
+                          from: "{{steps.checkout.outputs.artifacts.repo-source}}"
+                        parameters:
+                        - name: buildImage
+                          value: "{{workflow.parameters.buildImage}}"
+                        - name: projectName
+                          value: "virtru-public"
+                        - name: dockerhubRepoName
+                          value: "{{item.dockerhubRepoName}}"
+                        - name: dockerTag
+                          value: "{{workflow.parameters.dockerTag}}"
+                        - name: dockerFileName
+                          value: "{{item.dockerFileName}}"
+                        - name: workingDirectory
+                          value: "{{item.workingDirectory}}"
+                        - name: extraSwitches
+                          value: "{{item.extraSwitches}}"
           parameters:
             - src:
                 dependencyName: github-payload

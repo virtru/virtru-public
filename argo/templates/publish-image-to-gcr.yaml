@@ -1,0 +1,53 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: ClusterWorkflowTemplate
+metadata:
+  name: cwft-publish-image-to-gcr-virtru-public
+spec:
+  entrypoint: publish-image-to-gcr
+  templates:
+  - name: publish-image-to-gcr
+    inputs:
+      artifacts:
+      - name: repo-source
+        path: /src
+      parameters: 
+      - name: buildImage
+      - name: projectName
+      - name: dockerTag
+      - name: dockerFileName
+        # default: Dockerfile #! todo
+      - name: dockerhubRepoName
+      - name: workingDirectory
+      - name: extraSwitches
+    container:
+      image: "{{inputs.parameters.buildImage}}"
+      command: [sh, -c]
+      workingDir: "/src/{{inputs.parameters.projectName}}"
+      args: ["
+          /setup-build-env && 
+          ls -la && 
+          cd {{inputs.parameters.workingDirectory}} && 
+		  pwd &&
+          docker ps
+          "]
+      env:
+      - name: DOCKER_HOST
+        value: "tcp://localhost:2375"
+      - name: AWS_PROFILE
+        value: mgmt
+      envFrom:
+      - secretRef:
+          name: ci-secrets
+      - configMapRef:
+          name: ci-cm
+    sidecars:
+    - name: dind
+      image: docker:19.03.13-dind
+      env:
+      - name: DOCKER_TLS_CERTDIR
+        value: ""
+      securityContext:
+        privileged: true
+      mirrorVolumeMounts: true
+
