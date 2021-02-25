@@ -86,16 +86,8 @@ spec:
                           value: "{{workflow.parameters.buildImage}}"
                         - name: projectName
                           value: "virtru-public"
-                        - name: dockerhubRepoName
-                          value: "{{item.dockerhubRepoName}}"
                         - name: dockerTag
                           value: "{{workflow.parameters.dockerTag}}"
-                        - name: dockerFileName
-                          value: "{{item.dockerFileName}}"
-                        - name: workingDirectory
-                          value: "{{item.workingDirectory}}"
-                        - name: extraSwitches
-                          value: "{{item.extraSwitches}}"
           parameters:
             - src:
                 dependencyName: github-payload
