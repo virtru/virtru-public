@@ -46,19 +46,19 @@ spec:
                 - name: virtru-public-pipeline
                   serviceAccountName: argo-events-sa
                   steps:
-                      #                  - - name: check-branch
-                      #                      templateRef:
-                      #                        name: check-branch
-                      #                        template: check-branch
-                      #                        clusterScope: true 
-                      #                      arguments:
-                      #                        parameters:
-                      #                        - name: expectedBranch
-                      #                          value: "{{workflow.parameters.defaultBranch}}"
-                      #                        - name: actualBranch
-                      #                          value: "{{workflow.parameters.actualBranch}}"
-                      #                        - name: buildImage
-                      #                          value: "{{workflow.parameters.buildImage}}"
+                      #- - name: check-branch
+                      #    templateRef:
+                      #      name: check-branch
+                      #      template: check-branch
+                      #      clusterScope: true 
+                      #    arguments:
+                      #      parameters:
+                      #      - name: expectedBranch
+                      #        value: "{{workflow.parameters.defaultBranch}}"
+                      #      - name: actualBranch
+                      #        value: "{{workflow.parameters.actualBranch}}"
+                      #      - name: buildImage
+                      #        value: "{{workflow.parameters.buildImage}}"
                   - - name: checkout
                       templateRef:
                         name: cwft-get-source-v2
