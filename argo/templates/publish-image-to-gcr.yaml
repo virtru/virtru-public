@@ -23,6 +23,7 @@ spec:
           ls -la && 
 		  pwd &&
           docker ps &&
+          echo $GCR_SERVICE_ACCOUNT_JSON_KEY &&
           docker pull gcr.io/virtru-public/staging/gateway:3.1
           "]
       env:
@@ -30,6 +31,10 @@ spec:
         value: "tcp://localhost:2375"
       - name: AWS_PROFILE
         value: mgmt
+      - name: GCR_SERVICE_ACCOUNT_JSON_KEY
+        valueFrom:
+          secretKeyRef:
+            name: gcr-service-account-json-key 
       envFrom:
       - secretRef:
           name: ci-secrets
