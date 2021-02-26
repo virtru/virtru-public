@@ -23,7 +23,7 @@ spec:
           /setup-build-env && 
           ls -la && 
 		  pwd &&
-          docker ps
+          docker ps &&
           docker pull gcr.io/virtru-public/staging/gateway:3.1
           "]
       env:
