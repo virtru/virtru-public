@@ -30,6 +30,7 @@ spec:
           echo 'config' &&
           docker-credential-gcr config --token-source='env, store' &&
           docker-credential-gcr configure-docker --registries='gcr.io' &&
+          docker-credential-gcr gcr-login &&
           echo 'check creds' &&
           echo 'https://gcr.io' | docker-credential-gcr get &&
           echo 'try docker pull' &&
