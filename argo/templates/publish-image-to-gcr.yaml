@@ -33,8 +33,13 @@ spec:
           echo "INFO: check creds" &&
           echo "https://gcr.io" | docker-credential-gcr get &&
           docker-credential-gcr configure-docker &&
-          echo "INFO: try docker pull" &&
-          docker pull gcr.io/virtru-public/staging/gateway:3.1
+          echo "INFO: docker build and push" &&
+          export TAG=3.3;
+          export DEPLOYER_VERSION=3.3;
+          export REGISTRY=gcr.io/virtru-public/staging/gateway;
+          docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
+            -t $REGISTRY/deployer:$DEPLOYER_VERSION -f dev.Dockerfile .
+          docker push $REGISTRY/deployer:$DEPLOYER_VERSION
           ']
       env:
       - name: DOCKER_HOST
