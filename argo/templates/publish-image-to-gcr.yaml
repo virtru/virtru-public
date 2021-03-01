@@ -23,7 +23,7 @@ spec:
           ls -la && 
 		  pwd &&
           docker ps &&
-          echo "$GCR_VIRTRU_PUBLIC_JSON_KEY" > /tmp/gcr_virtru_public_json_key.json &&
+          printf "%s\n" "$GCR_VIRTRU_PUBLIC_JSON_KEY" > /tmp/gcr_virtru_public_json_key.json &&
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcr_virtru_public_json_key.json &&
           go get -u github.com/GoogleCloudPlatform/docker-credential-gcr &&
           which docker-credential-gcr &&
