@@ -25,15 +25,17 @@ spec:
           docker ps &&
           printf "%s\n" "$GCR_VIRTRU_PUBLIC_JSON_KEY" > /tmp/gcr_virtru_public_json_key.json &&
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcr_virtru_public_json_key.json &&
+          echo "INFO: cat file"
           cat /tmp/gcr_virtru_public_json_key.json &&
+          echo "INFO: get credential helper"
           go get -u github.com/GoogleCloudPlatform/docker-credential-gcr &&
           which docker-credential-gcr &&
-          echo "config" &&
+          echo "INFO: config" &&
           docker-credential-gcr config --token-source="env" &&
-          echo "check creds" &&
+          echo "INFO: check creds" &&
           echo "https://gcr.io" | docker-credential-gcr get &&
           docker-credential-gcr configure-docker &&
-          echo "try docker pull" &&
+          echo "INFO: try docker pull" &&
           docker pull gcr.io/virtru-public/staging/gateway:3.1
           ']
       env:
