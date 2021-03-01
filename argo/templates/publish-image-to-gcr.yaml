@@ -29,13 +29,11 @@ spec:
           which docker-credential-gcr &&
           echo 'config' &&
           docker-credential-gcr config --token-source='env, store' &&
-          docker-credential-gcr configure-docker --registries='gcr.io' &&
-          docker-credential-gcr gcr-login &&
+          docker-credential-gcr configure-docker &&
           echo 'check creds' &&
           echo 'https://gcr.io' | docker-credential-gcr get &&
           echo 'try docker pull' &&
-          docker pull gcr.io/virtru-public/staging/gateway:3.1 &&
-          docker-credential-gcr gcr-logout
+          docker pull gcr.io/virtru-public/staging/gateway:3.1
           "]
       env:
       - name: DOCKER_HOST
