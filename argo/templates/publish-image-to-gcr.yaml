@@ -18,23 +18,23 @@ spec:
       image: "{{inputs.parameters.buildImage}}"
       command: [sh, -c]
       workingDir: "/src/{{inputs.parameters.projectName}}"
-      args: ["
+      args: ['
           /setup-build-env && 
           ls -la && 
 		  pwd &&
           docker ps &&
-          echo $GCR_VIRTRU_PUBLIC_JSON_KEY > /tmp/gcr_virtru_public_json_key.json &&
+          echo "$GCR_VIRTRU_PUBLIC_JSON_KEY" > /tmp/gcr_virtru_public_json_key.json &&
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcr_virtru_public_json_key.json &&
           go get -u github.com/GoogleCloudPlatform/docker-credential-gcr &&
           which docker-credential-gcr &&
-          echo 'config' &&
-          docker-credential-gcr config --token-source='env' &&
-          echo 'check creds' &&
-          echo 'https://gcr.io' | docker-credential-gcr get &&
+          echo "config" &&
+          docker-credential-gcr config --token-source="env" &&
+          echo "check creds" &&
+          echo "https://gcr.io" | docker-credential-gcr get &&
           docker-credential-gcr configure-docker &&
-          echo 'try docker pull' &&
+          echo "try docker pull" &&
           docker pull gcr.io/virtru-public/staging/gateway:3.1
-          "]
+          ']
       env:
       - name: DOCKER_HOST
         value: "tcp://localhost:2375"
