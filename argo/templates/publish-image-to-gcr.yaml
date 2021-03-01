@@ -27,6 +27,7 @@ spec:
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcr_virtru_public_json_key.json &&
           go get -u github.com/GoogleCloudPlatform/docker-credential-gcr &&
           which docker-credential-gcr &&
+          echo 'config' &&
           docker-credential-gcr config --token-source='env, store' &&
           docker-credential-gcr configure-docker --registries='gcr.io' &&
           echo 'check creds' &&
