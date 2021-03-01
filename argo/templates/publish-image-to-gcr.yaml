@@ -23,7 +23,9 @@ spec:
           ls -la && 
 		  pwd &&
           docker ps &&
-          printf "%s\n" "$GCR_VIRTRU_PUBLIC_JSON_KEY" > /tmp/gcr_virtru_public_json_key.json &&
+          echo "$GCR_VIRTRU_PUBLIC_JSON_KEY" > /tmp/gcr_virtru_public_json_key.json &&
+           echo "INFO: print key" &&
+          echo "$GCR_VIRTRU_PUBLIC_JSON_KEY" &&
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcr_virtru_public_json_key.json &&
           echo "INFO: cat file" &&
           cat /tmp/gcr_virtru_public_json_key.json &&
