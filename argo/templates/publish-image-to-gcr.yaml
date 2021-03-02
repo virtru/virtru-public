@@ -26,6 +26,7 @@ spec:
 
           export TAG=2.14.0 &&
           export DEPLOYER_VERSION=2.14 &&
+          export REGISTRY=gcr.io/virtru-public/staging/gateway &&
 
           echo "INFO: Pull gateway image from dockerhub" &&
           docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
@@ -41,10 +42,12 @@ spec:
           docker-credential-gcr configure-docker &&
 
           echo "INFO: Push gateway image to GCR" &&
-          docker push virtru/gateway:$TAG &&
+          docker tag virtru/gateway:$TAG $REGISTRY:$TAG &&
+          docker push $REGISTRY:$TAG &&
+          docker tag virtru/gateway:$TAG $REGISTRY:$DEPLOYER_VERSION &&
+          docker push $REGISTRY:$DEPLOYER_VERSION &&
 
           echo "INFO: Build and push deployer image" &&
-          export REGISTRY=gcr.io/virtru-public/staging/gateway &&
           docker build --no-cache --build-arg TAG="$TAG" --build-arg REGISTRY="$REGISTRY" -t "$REGISTRY/deployer:$DEPLOYER_VERSION" -f dev.Dockerfile . &&
           docker push $REGISTRY/deployer:$DEPLOYER_VERSION
           ']
