@@ -28,6 +28,9 @@ spec:
           export DEPLOYER_VERSION=${TAG%.*}
           export REGISTRY=gcr.io/virtru-public/staging/gateway &&
 
+          echo "TAG=$TAG" &&
+          echo "DEPLOYER_VERSION=$DEPLOYER_VERSION" &&
+
           echo "INFO: Pull gateway image from dockerhub" &&
           docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
           docker pull virtru/gateway:$TAG &&
