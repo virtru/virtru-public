@@ -23,17 +23,27 @@ spec:
           ls -la && 
 		  pwd &&
           docker ps &&
+
+          export TAG=2.14.0 &&
+          export DEPLOYER_VERSION=2.14 &&
+
+          echo "INFO: Pull gateway image from dockerhub" &&
+          docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
+          docker pull virtru/gateway:$TAG &&
+          docker logout &&
+
+          echo "INFO: Configure credentials for GCR" &&
           echo "$GCR_VIRTRU_PUBLIC_JSON_KEY" > /tmp/gcr_virtru_public_json_key.json &&
           export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcr_virtru_public_json_key.json &&
-          echo "INFO: get credential helper" &&
           go get -u github.com/GoogleCloudPlatform/docker-credential-gcr &&
           which docker-credential-gcr &&
-          echo "INFO: config" &&
           docker-credential-gcr config --token-source="env" &&
           docker-credential-gcr configure-docker &&
-          echo "INFO: docker build and push" &&
-          export TAG=3.3 &&
-          export DEPLOYER_VERSION=3.3 &&
+
+          echo "INFO: Push gateway image to GCR" &&
+          docker push virtru/gateway:$TAG &&
+
+          echo "INFO: Build and push deployer image" &&
           export REGISTRY=gcr.io/virtru-public/staging/gateway &&
           docker build --no-cache --build-arg TAG="$TAG" --build-arg REGISTRY="$REGISTRY" -t "$REGISTRY/deployer:$DEPLOYER_VERSION" -f dev.Dockerfile . &&
           docker push $REGISTRY/deployer:$DEPLOYER_VERSION
