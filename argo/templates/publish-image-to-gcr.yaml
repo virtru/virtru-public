@@ -25,7 +25,7 @@ spec:
           docker ps &&
 
           export TAG=2.14.0 &&
-          export DEPLOYER_VERSION=2.14 &&
+          export DEPLOYER_VERSION=${TAG%.*}
           export REGISTRY=gcr.io/virtru-public/staging/gateway &&
 
           echo "INFO: Pull gateway image from dockerhub" &&
