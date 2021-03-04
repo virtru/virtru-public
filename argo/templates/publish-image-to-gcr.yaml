@@ -14,6 +14,8 @@ spec:
       - name: buildImage
       - name: projectName
       - name: dockerTag
+      - name: sourceRepoDockerhub
+      - name: destinationRegistry
     container:
       image: "{{inputs.parameters.buildImage}}"
       command: [sh, -c]
@@ -26,14 +28,15 @@ spec:
 
           export TAG={{inputs.parameters.dockerTag}} &&
           export DEPLOYER_VERSION=${TAG%.*}
-          export REGISTRY=gcr.io/virtru-public/staging/gateway &&
+          export SOURCE_REPO_DOCKERHUB={{inputs.parameters.sourceRepoDockerhub}}
+          export REGISTRY={{inputs.parameters.destinationRegistry}} &&
 
           echo "TAG=$TAG" &&
           echo "DEPLOYER_VERSION=$DEPLOYER_VERSION" &&
 
-          echo "INFO: Pull gateway image from dockerhub" &&
+          echo "INFO: Pull image from dockerhub" &&
           docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD &&
-          docker pull virtru/gateway:$TAG &&
+          docker pull $SOURCE_REPO_DOCKERHUB:$TAG &&
           docker logout &&
 
           echo "INFO: Configure credentials for GCR" &&
@@ -44,10 +47,10 @@ spec:
           docker-credential-gcr config --token-source="env" &&
           docker-credential-gcr configure-docker &&
 
-          echo "INFO: Push gateway image to GCR" &&
-          docker tag virtru/gateway:$TAG $REGISTRY:$TAG &&
+          echo "INFO: Push image to GCR" &&
+          docker tag $SOURCE_REPO_DOCKERHUB:$TAG $REGISTRY:$TAG &&
           docker push $REGISTRY:$TAG &&
-          docker tag virtru/gateway:$TAG $REGISTRY:$DEPLOYER_VERSION &&
+          docker tag $SOURCE_REPO_DOCKERHUB:$TAG $REGISTRY:$DEPLOYER_VERSION &&
           docker push $REGISTRY:$DEPLOYER_VERSION &&
 
           echo "INFO: Build and push deployer image" &&

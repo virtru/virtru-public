@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Sensor
 metadata:
-  name: github-virtru-public
+  name: dockerhub-virtru-public
 spec:
   template:
     serviceAccountName: argo-events-sa
   dependencies:
-    - name: github-payload
-      eventSourceName: github-virtru-public
-      eventName: gitPush
+    - name: dockerhub-payload
+      eventSourceName: dockerhub-virtru-public-gateway
+      eventName: dockerhubGateway
   triggers:
     - template:
-        name: github-workflow-trigger
+        name: dockerhub-workflow-trigger
         k8s:
           group: argoproj.io
           version: v1alpha1
@@ -28,12 +28,10 @@ spec:
                 serviceAccountName: argo-events-sa
                 arguments:
                   parameters:
-                  - name: actualBranch
+                  - name: dockerTag
                     value: replaced-via-triggers-k8s-param-0
                   - name: defaultBranch
-                    value: replaced-via-triggers-k8s-param-1
-                  - name: dockerTag
-                    value: replaced-via-triggers-k8s-param-2
+                    value: "main"
                   - name: gitRepoUrl
                     value: "https://github.com/virtru/virtru-public.git"
                   - name: gitRepoName
@@ -46,19 +44,6 @@ spec:
                 - name: virtru-public-pipeline
                   serviceAccountName: argo-events-sa
                   steps:
-                      #- - name: check-branch
-                      #    templateRef:
-                      #      name: check-branch
-                      #      template: check-branch
-                      #      clusterScope: true 
-                      #    arguments:
-                      #      parameters:
-                      #      - name: expectedBranch
-                      #        value: "{{workflow.parameters.defaultBranch}}"
-                      #      - name: actualBranch
-                      #        value: "{{workflow.parameters.actualBranch}}"
-                      #      - name: buildImage
-                      #        value: "{{workflow.parameters.buildImage}}"
                   - - name: checkout
                       templateRef:
                         name: cwft-get-source-v2
@@ -88,17 +73,12 @@ spec:
                           value: "virtru-public"
                         - name: dockerTag
                           value: "{{workflow.parameters.dockerTag}}"
+                        - name: sourceRepoDockerhub
+                          value: "virtru/gateway"
+                        - name: destinationRegistry
+                          value: "gcr.io/virtru-public/staging/gateway"
           parameters:
             - src:
-                dependencyName: github-payload
-                dataKey: body.ref
+                dependencyName: dockerhub-payload
+                dataKey: body.push_data.tag 
               dest: spec.arguments.parameters.0.value # todo see if you can reference name not index
-            - src:
-                dependencyName: github-payload
-                dataKey: body.repository.default_branch
-              dest: spec.arguments.parameters.1.value # todo see if you can reference name not index    
-            - src:
-                dependencyName: github-payload
-                dataKey: body.after
-              dest: spec.arguments.parameters.2.value # todo see if you can reference name not index
-

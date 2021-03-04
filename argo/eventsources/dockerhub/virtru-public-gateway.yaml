@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: dockerhub-virtru-public-gateway #!eventSourceName
+spec:
+  service:
+    ports:
+      - port: 12000
+        targetPort: 12000
+  webhook: 
+    # event-source can run multiple HTTP servers. Simply define a unique port to start a new HTTP server
+    dockerhubGateway: #! eventName
+      # port to run HTTP server on
+      port: "12000"
+      # endpoint to listen to
+      endpoint: /dockerPush
+      # HTTP request method to allow. In this case, only POST requests are accepted
+      method: POST
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  name: dockerhub-virtru-public-gateway-eventsource-svc
+  namespace: argo-events
+  labels:
+    run: dockerhub-virtru-public-gateway-eventsource-svc
+spec:
+  rules:
+    - host: dockerhub-virtru-public-gateway-eventsource-svc.mgmt.virtru.com
+      http:
+        paths:
+          - backend:
+              serviceName: dockerhub-virtru-public-gateway-eventsource-svc
+              servicePort: 12000
+            path: /dockerPush
+  tls:
+    - hosts:
+        - dockerhub-virtru-public-gateway-eventsource-svc.mgmt.virtru.com
+      secretName: dockerhub-virtru-public-gateway-eventsource-svc-secret
+
+
