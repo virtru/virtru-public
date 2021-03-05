@@ -83,10 +83,33 @@ spec:
             timeoutSeconds: 60
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        - name: billing-{{ .Chart.Name }}
+          image: gcr.io/cloud-marketplace-tools/metering/ubbagent:latest
+          env:
+            - name: AGENT_CONFIG_FILE
+              value: "/etc/ubbagent/config.yaml"
+            - name: AGENT_LOCAL_PORT
+              value: "4567"
+            - name: AGENT_ENCODED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: $reportingSecret
+                  key: reporting-key
+            - name: AGENT_CONSUMER_ID
+              valueFrom:
+                secretKeyRef:
+                  name: $reportingSecret
+                  key: consumer-id
+          volumeMounts:
+            - name: ubbagent-config
+              mountPath: /etc/ubbagent
       volumes:
       - name: cert-dir
         emptyDir: {}
       {{- with .Values.nodeSelector }}
+      - name: ubbagent-config
+        configMap:
+          name: ubbagent-config
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
