@@ -68,6 +68,11 @@ properties:
     type: string
     x-google-marketplace:
       type: STRING
+  imageUbbagent:
+    type: string
+    default: gcr.io/cloud-marketplace-tools/metering/ubbagent:latest
+    x-google-marketplace:
+      type: IMAGE
   reportingSecret:
     type: string
     x-google-marketplace:
