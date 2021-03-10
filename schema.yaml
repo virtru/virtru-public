@@ -39,6 +39,7 @@ x-google-marketplace:
       type: UNSUPPORTED
 
 #* application properties
+# Refer to https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/blob/master/docs/schema.md
 properties:
   name:
     type: string
@@ -66,6 +67,7 @@ properties:
       type: STRING
   amplitudeToken:
     type: string
+    default: ENTER_REPORTING_SECRET
     x-google-marketplace:
       type: STRING
   imageUbbagent:
@@ -73,8 +75,14 @@ properties:
     default: gcr.io/cloud-marketplace-tools/metering/ubbagent:latest
     x-google-marketplace:
       type: IMAGE
+  licensedUsers:
+    type: string
+    default: "1"
+    x-google-marketplace:
+      type: IMAGE
   reportingSecret:
     type: string
+    default: ENTER_REPORTING_SECRET
     x-google-marketplace:
       type: REPORTING_SECRET
 required:
