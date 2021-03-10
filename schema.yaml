@@ -79,7 +79,7 @@ properties:
     type: string
     default: "1"
     x-google-marketplace:
-      type: IMAGE
+      type: STRING
   reportingSecret:
     type: string
     default: ENTER_REPORTING_SECRET
