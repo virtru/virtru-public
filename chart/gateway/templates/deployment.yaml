@@ -84,7 +84,7 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
         - name: billing-agent-{{ .Chart.Name }}
-          image: $imageUbbagent
+          image: gcr.io/cloud-marketplace-tools/metering/ubbagent:latest
           env:
             - name: AGENT_CONFIG_FILE
               value: "/etc/ubbagent/config.yaml"
