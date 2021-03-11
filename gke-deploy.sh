@@ -17,8 +17,8 @@
 #   gcloud auth configure-docker
 set -eu
 
-export TAG=2.16.1;
-export DEPLOYER_VERSION=2.16.1;
+export TAG=2.16.0-3;
+export DEPLOYER_VERSION=$TAG;
 export REGISTRY=gcr.io/virtru-public/staging/gateway;
 docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
   -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile .
@@ -26,4 +26,6 @@ docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
 
 # mpdev install to install, mpdev verify to test
 mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
---parameters='{"name": "gateway", "namespace": "virtru", "gatewayHostname": "gateway-development.virtru.com", "gatewayApiTokenName": "token", "gatewayApiSecret": "mysecret", "reportingSecret": "myReportingSecret", "imageUbbagent":"gcr.io/cloud-marketplace-tools/metering/ubbagent:latest", "licensedUsers":"10"}'
+--parameters='{"name": "gateway", "namespace": "virtru", "gatewayHostname": "gateway-development.virtru.com", "gatewayApiTokenName": "token", "gatewayApiSecret": "mysecret", "licensedUsers":"10", "primaryMailingDomain":"example.com", "reportingSecret":"gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"}'
+
+#kubectl logs -f job/gateway-deployer

@@ -77,7 +77,7 @@ properties:
       type: STRING
   reportingSecret:
     type: string
-    default: ENTER_REPORTING_SECRET
+    default: "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
     x-google-marketplace:
       type: REPORTING_SECRET
 required:

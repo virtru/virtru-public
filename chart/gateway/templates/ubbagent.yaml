@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: billing-{{ .Chart.Name }}
+  name: ubbagent-config
 data:
   config.yaml: |
     # This billing agent ubbagent config has been adapted from:
@@ -25,7 +25,7 @@ data:
     # Since this metric is not supported by the "sources" section,
     # the application must send usage reports for this metric to
     # the agent.
-    - name: licensed-users
+    - name: user
       type: int
 
       # The endpoints section of a metric defines which endpoints the

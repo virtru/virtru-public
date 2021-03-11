@@ -83,7 +83,7 @@ spec:
             timeoutSeconds: 60
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-        - name: billing-agent-{{ .Chart.Name }}
+        - name: ubbagent
           image: gcr.io/cloud-marketplace-tools/metering/ubbagent:latest
           env:
             - name: AGENT_CONFIG_FILE
@@ -93,13 +93,18 @@ spec:
             - name: AGENT_ENCODED_KEY
               valueFrom:
                 secretKeyRef:
-                  name: $reportingSecret
+                  name: {{ .Values.reportingSecret }}
                   key: reporting-key
             - name: AGENT_CONSUMER_ID
               valueFrom:
                 secretKeyRef:
-                  name: $reportingSecret
+                  name: {{ .Values.reportingSecret }}
                   key: consumer-id
+            - name: ENTITLEMENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.reportingSecret }}
+                  key: entitlement-id
           volumeMounts:
             - name: ubbagent-config
               mountPath: /etc/ubbagent
@@ -107,14 +112,14 @@ spec:
           image: alpine:latest
           # This container runs a curl command on infinite loop. The curl posts usage data to ubbagent.
           # see https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/blob/master/docs/billing-integration.md#sending-usage-reports
-          command: ['while true; do curl -X POST -d "{"name":"licensed-users", "startTime": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")","endTime": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")","value": { "int64Value": $licensedUsers }}" "http://localhost:4567/report"; sleep 10; done']
+          command: ['while true; do curl -X POST -d "{"name":"user", "startTime": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")","endTime": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")","value": { "int64Value": $licensedUsers }}" "http://localhost:4567/report"; sleep 10; done']
       volumes:
       - name: cert-dir
         emptyDir: {}
-      {{- with .Values.nodeSelector }}
       - name: ubbagent-config
         configMap:
           name: ubbagent-config
+      {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
