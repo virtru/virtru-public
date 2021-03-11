@@ -17,7 +17,7 @@
 #   gcloud auth configure-docker
 set -eu
 
-export TAG=2.16.0-3;
+export TAG=2.16.1;
 export DEPLOYER_VERSION=$TAG;
 export REGISTRY=gcr.io/virtru-public/staging/gateway;
 docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \

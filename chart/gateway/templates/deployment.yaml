@@ -112,7 +112,18 @@ spec:
           image: alpine:latest
           # This container runs a curl command on infinite loop. The curl posts usage data to ubbagent.
           # see https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/blob/master/docs/billing-integration.md#sending-usage-reports
-          command: ['while true; do curl -X POST -d "{"name":"user", "startTime": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")","endTime": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")","value": { "int64Value": $licensedUsers }}" "http://localhost:4567/report"; sleep 10; done']
+          command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            apk add curl
+            while true
+            do
+              postbody="{\"name\":\"user\", \"startTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"endTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"value\": { \"int64Value\": \"$user\" }}"
+              printf "${postbody}"
+              curl -X POST -d "${postbody}" "http://localhost:4567/report"
+              sleep 10
+            done
       volumes:
       - name: cert-dir
         emptyDir: {}
