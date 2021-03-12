@@ -13,9 +13,9 @@ ADD chart/$CHART_NAME /tmp/chart
 RUN cd /tmp && tar -czvf /tmp/$CHART_NAME.tar.gz chart
 
 #! skip tests?
-#ADD miniapptest/deployer/$CHART_NAME /tmp/test/chart
-#RUN cd /tmp/test \
-#    && tar -czvf /tmp/test/$CHART_NAME.tar.gz chart/
+ADD miniapptest/deployer/$CHART_NAME /tmp/test/chart
+RUN cd /tmp/test \
+    && tar -czvf /tmp/test/$CHART_NAME.tar.gz chart/
 
 ADD schema.yaml /tmp/schema.yaml
 
@@ -32,11 +32,11 @@ RUN cat /tmp/schema.yaml \
     && mv /tmp/schema.yaml.new /tmp/schema.yaml
 
 #! skip tests?
-#ADD apptest/deployer/schema.yaml /tmp/apptest/schema.yaml
-#RUN cat /tmp/apptest/schema.yaml \
-#    | env -i "REGISTRY=$REGISTRY" "TAG=$TAG" envsubst \
-#    > /tmp/apptest/schema.yaml.new \
-#    && mv /tmp/apptest/schema.yaml.new /tmp/apptest/schema.yaml
+ADD apptest/deployer/schema.yaml /tmp/apptest/schema.yaml
+RUN cat /tmp/apptest/schema.yaml \
+    | env -i "REGISTRY=$REGISTRY" "TAG=$TAG" envsubst \
+    > /tmp/apptest/schema.yaml.new \
+    && mv /tmp/apptest/schema.yaml.new /tmp/apptest/schema.yaml
 
 FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:$MARKETPLACE_TOOLS_TAG
 
