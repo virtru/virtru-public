@@ -25,6 +25,8 @@ data:
     # Since this metric is not supported by the "sources" section,
     # the application must send usage reports for this metric to
     # the agent.
+
+    # `user` metric is the number of licensed users purchased from Virtru.
     - name: user
       type: int
 
@@ -53,7 +55,7 @@ data:
     # The reporting metric is recommended to be more granular than
     # the pricing metric. If it is not, a double type is likely
     # needed to provide sufficient precision.
-    - name: licensed_users
+    - name: user
       type: int
 
       endpoints:
