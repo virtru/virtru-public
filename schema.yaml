@@ -39,6 +39,7 @@ x-google-marketplace:
       type: UNSUPPORTED
 
 #* application properties
+# Refer to https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/blob/master/docs/schema.md
 properties:
   name:
     type: string
@@ -66,9 +67,19 @@ properties:
       type: STRING
   amplitudeToken:
     type: string
+    default: AMPLITUDE_TOKEN
     x-google-marketplace:
       type: STRING
-    
+  user:
+    type: string
+    default: "1"
+    x-google-marketplace:
+      type: STRING
+  reportingSecret:
+    type: string
+    default: "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
+    x-google-marketplace:
+      type: REPORTING_SECRET
 required:
 - name
 - namespace

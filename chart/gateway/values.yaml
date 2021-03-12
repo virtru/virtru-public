@@ -61,3 +61,5 @@ gatewayMode: encrypt-everything
 gatewayOrganizationName: 'my-organization'
 gatewayTopology: outbound
 gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
+
+reportingSecret: $reportingSecret
