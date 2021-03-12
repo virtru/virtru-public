@@ -13,7 +13,7 @@ ADD chart/$CHART_NAME /tmp/chart
 RUN cd /tmp && tar -czvf /tmp/$CHART_NAME.tar.gz chart
 
 #! skip tests?
-ADD miniapptest/deployer/$CHART_NAME /tmp/test/chart
+ADD apptest/deployer/$CHART_NAME /tmp/test/chart
 RUN cd /tmp/test \
     && tar -czvf /tmp/test/$CHART_NAME.tar.gz chart/
 

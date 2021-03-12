@@ -67,7 +67,7 @@ properties:
       type: STRING
   amplitudeToken:
     type: string
-    default: ENTER_REPORTING_SECRET
+    default: AMPLITUDE_TOKEN
     x-google-marketplace:
       type: STRING
   licensedUsers:
