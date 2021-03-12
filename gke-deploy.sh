@@ -26,4 +26,4 @@ docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
 
 # mpdev install to install, mpdev verify to test
 mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
---parameters='{"name": "gateway", "namespace": "virtru", "gatewayHostname": "gateway-development.virtru.com", "gatewayApiTokenName": "token", "gatewayApiSecret": "mysecret", "licensedUsers":"10", "primaryMailingDomain":"example.com", "reportingSecret":"gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"}'
+--parameters='{"name": "gateway", "namespace": "virtru", "gatewayHostname": "gateway-development.virtru.com", "gatewayApiTokenName": "token", "gatewayApiSecret": "mysecret", "user":"10", "primaryMailingDomain":"example.com", "reportingSecret":"gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"}'
