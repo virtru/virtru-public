@@ -3,7 +3,7 @@
 # pwd should be /your/path/to/virtru-public
 # Reference: https://docs-development.preprod.virtru.com/gcp/gcr/
 
-# Prerequisite: install Application CRD?
+# Prerequisite: install Application CRD
 # kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
 
 # Prerequisite: connect to GKE if you want to deploy there.
