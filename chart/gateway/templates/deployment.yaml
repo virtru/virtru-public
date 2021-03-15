@@ -117,10 +117,11 @@ spec:
           - "-c"
           - |
             apk add curl
+            echo "Starting billing helper" >&2
             while true
             do
-              postbody="{\"name\":\"user\", \"startTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"endTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"value\": { \"int64Value\": \"$user\" }}"
-              printf "${postbody}"
+              postbody="{\"name\":\"user\", \"startTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"endTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"value\": { \"int64Value\": {{ .Values.user }} } }"
+              echo "${postbody}" >&2
               curl -X POST -d "${postbody}" "http://localhost:4567/report"
               sleep 120
             done
