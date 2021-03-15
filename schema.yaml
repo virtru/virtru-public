@@ -77,7 +77,9 @@ properties:
       type: STRING
   reportingSecret:
     type: string
-    default: "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
+    default: "gateway-reportingsecret"
+    # If gateway-reportingsecret isn't available in your environment, use:
+    # default: "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
     x-google-marketplace:
       type: REPORTING_SECRET
 required:
