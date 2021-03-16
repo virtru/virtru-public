@@ -16,7 +16,7 @@ x-google-marketplace:
           type: REPO_WITH_REGISTRY
         image.tag:
           type: TAG
-  
+
   clusterConstraints:
     k8sVersion: ">=1.16.0"
     assistedClusterCreation:
@@ -63,6 +63,7 @@ properties:
       type: STRING
   primaryMailingDomain:
     type: string
+    default: "example.com"
     x-google-marketplace:
       type: STRING
   amplitudeToken:
