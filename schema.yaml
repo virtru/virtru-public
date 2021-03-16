@@ -82,6 +82,11 @@ properties:
     # default: "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
     x-google-marketplace:
       type: REPORTING_SECRET
+  ubbagentImage:
+    type: string
+    default: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
+    x-google-marketplace:
+      type: STRING
 required:
 - name
 - namespace

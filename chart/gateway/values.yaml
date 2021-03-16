@@ -64,3 +64,4 @@ gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
 
 reportingSecret: $reportingSecret
 user: $user
+ubbagentImage: $ubbagentImage
