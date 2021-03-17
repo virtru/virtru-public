@@ -4,7 +4,7 @@ image:
   repository: gcr.io/virtru-public/staging/gateway
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.16.1"
+  tag: "2.14.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -58,9 +58,5 @@ gatewayHostname: my-domain.example.com
 gatewayApiTokenName: my-token
 gatewayApiSecret: my-secret
 gatewayMode: encrypt-everything
-gatewayOrganizationName: 'my-organization'
 gatewayTopology: outbound
 gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
-
-reportingSecret: $reportingSecret
-user: $user

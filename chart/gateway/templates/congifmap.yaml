@@ -10,7 +10,7 @@ data:
   GATEWAY_API_TOKEN_NAME:  {{ .Values.gatewayApiTokenName }}
   GATEWAY_HOSTNAME: {{ .Values.gatewayHostname }}
   GATEWAY_MODE: {{ .Values.gatewayMode }}
-  GATEWAY_ORGANIZATION_DOMAIN:  {{ .Values.gatewayOrganizationName }}
+  GATEWAY_ORGANIZATION_DOMAIN: {{ .Values.primaryMailingDomain }}
   GATEWAY_TOPOLOGY: {{ .Values.gatewayTopology }}
   GATEWAY_REMOTE_CONTENT_BASE_URL: {{ .Values.gatewayRemoteContentBaseUrl }}
   GATEWAY_PROXY_PROTOCOL: "0"
