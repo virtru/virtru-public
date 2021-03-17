@@ -90,9 +90,6 @@ spec:
               value: "/etc/ubbagent/config.yaml"
             - name: AGENT_LOCAL_PORT
               value: "4567"
-            - name: SECRETS_SOURCE
-              # For debugging. Show which secrets object is used.
-              value: {{ .Values.reportingSecret }}
             - name: AGENT_ENCODED_KEY
               valueFrom:
                 secretKeyRef:
