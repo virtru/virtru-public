@@ -63,7 +63,6 @@ properties:
       type: STRING
   primaryMailingDomain:
     type: string
-    default: "example.com"
     x-google-marketplace:
       type: STRING
   amplitudeToken:
