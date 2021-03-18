@@ -16,6 +16,11 @@ x-google-marketplace:
           type: REPO_WITH_REGISTRY
         image.tag:
           type: TAG
+    ubbagent:
+      properties:
+        ubbagentImage:
+          type: FULL
+          default: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
 
   clusterConstraints:
     k8sVersion: ">=1.16.0"
@@ -106,9 +111,6 @@ properties:
     type: string
     x-google-marketplace:
       type: REPORTING_SECRET
-  ubbagentImage:
-    type: string
-    default: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
 required:
 - name
 - namespace
