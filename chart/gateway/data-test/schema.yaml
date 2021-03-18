@@ -45,9 +45,7 @@ properties:
       type: STRING
   user:
     type: string
-    default: "1"
-    x-google-marketplace:
-      type: STRING
+    default: "25"
   reportingSecret:
     type: string
     default: "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"

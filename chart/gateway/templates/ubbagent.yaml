@@ -26,17 +26,70 @@ data:
     # the application must send usage reports for this metric to
     # the agent.
 
-    # `user` metric is the number of licensed users purchased from Virtru.
-    - name: user
-      type: int
+    # This is the list of metrics from our current pricing:
+    # gateway___gmail_encryption__per_user_
+    # gateway___gdrive_encryption__per_user_
+    # gateway___gmail___gdrive_encryption__per_user_
+    # gateway_network_level_encryption
+    # gateway__gmail_encryption_with_customer_hosted_keys___per_user_
+    # gateway__gdrive_encryption_with_customer_hosted_keys___per_user_
+    # gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_
+    # gateway_network_level_encryption_with_customer_hosted_keys__per_user_
 
-      # The endpoints section of a metric defines which endpoints the
-      # metric data is sent to.
+    # each one should show the number of licensed users purchased from Virtru.
+
+    - name: gateway___gmail_encryption__per_user_
+      type: int
       endpoints:
       - name: on_disk
       - name: servicecontrol
-
       passthrough: {}
+    - name: gateway___gdrive_encryption__per_user_
+      type: int
+      endpoints:
+      - name: on_disk
+      - name: servicecontrol
+      passthrough: {}
+    - name: gateway___gmail___gdrive_encryption__per_user_
+      type: int
+      endpoints:
+      - name: on_disk
+      - name: servicecontrol
+      passthrough: {}
+    - name: gateway_network_level_encryption
+      type: int
+      endpoints:
+      - name: on_disk
+      - name: servicecontrol
+      passthrough: {}
+    - name: gateway__gmail_encryption_with_customer_hosted_keys___per_user_
+      type: int
+      endpoints:
+      - name: on_disk
+      - name: servicecontrol
+      passthrough: {}
+    - name: gateway__gdrive_encryption_with_customer_hosted_keys___per_user_
+      type: int
+      endpoints:
+      - name: on_disk
+      - name: servicecontrol
+      passthrough: {}
+    - name: gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_
+      type: int
+      endpoints:
+      - name: on_disk
+      - name: servicecontrol
+      passthrough: {}
+    - name: gateway_network_level_encryption_with_customer_hosted_keys__per_user_
+      type: int
+      endpoints:
+      - name: on_disk
+      - name: servicecontrol
+      passthrough: {}
+
+      # The endpoints section of a metric defines which endpoints the
+      # metric data is sent to.
+
       # Metrics reported by the application are aggregated by the
       # agent for a specified period of time and sent to the
       # reporting endpoint (e.g. Google Service Control)
@@ -87,7 +140,7 @@ data:
         identity: gcp
         # The service name is unique to your application and will be
         # provided during onboarding.
-        serviceName: {{ .Chart.Name }}.virtru.appspot.com
+        serviceName: {{ .Chart.Name }}.mp-virtru-public.appspot.com
         consumerId: $AGENT_CONSUMER_ID  # From the reporting secret.
 
     # The sources section lists metric data sources run by the agent
