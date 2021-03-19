@@ -50,27 +50,39 @@ properties:
     x-google-marketplace:
       type: NAMESPACE
   gatewayHostname:
+    title: Gateway Hostname
+    description: The hostname for your Gateway instance
     type: string
     x-google-marketplace:
       type: STRING
   gatewayApiTokenName:
+    title: Gateway Token ID
+    description: The Gateway token ID provided by Virtru
     type: string
     x-google-marketplace:
       type: STRING
   gatewayApiSecret:
+    title: Gateway Token
+    description: The Gateway token secret provided by Virtru
     type: string
     x-google-marketplace:
       type: STRING
   primaryMailingDomain:
+    title: Primary mailing domain
+    description: The primary mailing domain
     type: string
     x-google-marketplace:
       type: STRING
   amplitudeToken:
+    title: Amplitude Token
+    description: The Amplitude token provided by Virtru
     type: string
     default: AMPLITUDE_TOKEN
     x-google-marketplace:
       type: STRING
   numberOfLicenses:
+    title: Number of Seats
+    description: The number of seats/licenses for your organization
     type: string
     default: "1"
     x-google-marketplace:
@@ -79,11 +91,6 @@ properties:
     type: string
     x-google-marketplace:
       type: REPORTING_SECRET
-  ubbagentImage:
-    type: string
-    default: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
-    x-google-marketplace:
-      type: STRING
 required:
 - name
 - namespace
