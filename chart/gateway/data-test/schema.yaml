@@ -1,0 +1,55 @@
+x-google-marketplace:
+#* schema level properties
+  schemaVersion: v2
+
+# Additional properties for test/verify. Reference:
+# https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/blob/master/docs/verification-integration.md
+
+# this file will be applied together with the normal schema.yaml, to populate chart values during verification.
+
+properties:
+  name:
+    type: string
+    default: gateway
+    x-google-marketplace:
+      type: NAME
+  namespace:
+    type: string
+    default: virtru
+    x-google-marketplace:
+      type: NAMESPACE
+  gatewayHostname:
+    type: string
+    default: gateway-development-verify.virtru.com
+    x-google-marketplace:
+      type: STRING
+  gatewayApiTokenName:
+    type: string
+    default: fake-gatewayApiTokenName
+    x-google-marketplace:
+      type: STRING
+  gatewayApiSecret:
+    type: string
+    default: fake-gatewayApiSecret
+    x-google-marketplace:
+      type: STRING
+  primaryMailingDomain:
+    type: string
+    default: example.com
+    x-google-marketplace:
+      type: STRING
+  amplitudeToken:
+    type: string
+    default: fake-amplitudeToken
+    x-google-marketplace:
+      type: STRING
+  user:
+    type: string
+    default: "1"
+    x-google-marketplace:
+      type: STRING
+  reportingSecret:
+    type: string
+    default: "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
+    x-google-marketplace:
+      type: REPORTING_SECRET

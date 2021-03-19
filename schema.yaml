@@ -16,7 +16,7 @@ x-google-marketplace:
           type: REPO_WITH_REGISTRY
         image.tag:
           type: TAG
-  
+
   clusterConstraints:
     k8sVersion: ">=1.16.0"
     assistedClusterCreation:
@@ -77,9 +77,13 @@ properties:
       type: STRING
   reportingSecret:
     type: string
-    default: "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
     x-google-marketplace:
       type: REPORTING_SECRET
+  ubbagentImage:
+    type: string
+    default: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
+    x-google-marketplace:
+      type: STRING
 required:
 - name
 - namespace

@@ -25,6 +25,8 @@ data:
     # Since this metric is not supported by the "sources" section,
     # the application must send usage reports for this metric to
     # the agent.
+
+    # `user` metric is the number of licensed users purchased from Virtru.
     - name: user
       type: int
 
@@ -34,11 +36,10 @@ data:
       - name: on_disk
       - name: servicecontrol
 
+      passthrough: {}
       # Metrics reported by the application are aggregated by the
       # agent for a specified period of time and sent to the
       # reporting endpoint (e.g. Google Service Control)
-      aggregation:
-        bufferSeconds: 60
 
     # The reporting unit which the application should use to report
     # usage to the agent should align with the metric unit in the
@@ -53,14 +54,6 @@ data:
     # The reporting metric is recommended to be more granular than
     # the pricing metric. If it is not, a double type is likely
     # needed to provide sufficient precision.
-    - name: licensed_users
-      type: int
-
-      endpoints:
-      - name: on_disk
-      - name: servicecontrol
-
-      passthrough: {}
 
     # The agent is able to automatically send instance time usage
     # reports, configured in the "source" section.

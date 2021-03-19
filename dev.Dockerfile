@@ -21,3 +21,4 @@ FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.10.10
 
 COPY --from=build /tmp/gateway.tar.gz /data/chart/
 COPY --from=build /tmp/schema.yaml /data/
+COPY --from=build /tmp/chart/data-test/schema.yaml /data-test/
