@@ -26,8 +26,8 @@ data:
     # the application must send usage reports for this metric to
     # the agent.
 
-    # `user` metric is the number of licensed users purchased from Virtru.
-    - name: user
+    # `numberOfLicenses` metric is the number of licensed users purchased from Virtru.
+    - name: numberOfLicenses
       type: int
 
       # The endpoints section of a metric defines which endpoints the

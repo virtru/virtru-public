@@ -60,3 +60,4 @@ gatewayApiSecret: my-secret
 gatewayMode: encrypt-everything
 gatewayTopology: outbound
 gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
+ubbagentImage: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
