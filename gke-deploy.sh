@@ -19,11 +19,11 @@ set -eu
 
 export TAG=2.14.0;
 export DEPLOYER_VERSION=$TAG;
-export REGISTRY=gcr.io/virtru-public/staging/gateway;
+export REGISTRY=gcr.io/virtru-public/gateway;
 docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
   -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile .
 docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
 
 # mpdev install to install, mpdev verify to test
 mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
---parameters='{"name": "gateway", "namespace": "virtru", "gatewayHostname": "gateway-development.virtru.com", "gatewayApiTokenName": "token", "gatewayApiSecret": "mysecret", "user":"10", "primaryMailingDomain":"virtru.example.com", "reportingSecret":"gateway-reportingsecret"}'
+--parameters='{"name": "gateway", "namespace": "virtru", "gatewayHostname": "gateway-development.virtru.com", "gatewayApiTokenName": "token", "gatewayApiSecret": "mysecret", "numberOfLicenses":"10", "primaryMailingDomain":"virtru.example.com", "reportingSecret":"gateway-reportingsecret"}'

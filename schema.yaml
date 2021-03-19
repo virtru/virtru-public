@@ -70,7 +70,7 @@ properties:
     default: AMPLITUDE_TOKEN
     x-google-marketplace:
       type: STRING
-  user:
+  numberOfLicenses:
     type: string
     default: "1"
     x-google-marketplace:
