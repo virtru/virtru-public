@@ -19,7 +19,7 @@ set -eu
 
 export TAG=2.14.0;
 export DEPLOYER_VERSION=$TAG;
-export REGISTRY=gcr.io/virtru-public/gateway;
+export REGISTRY=gcr.io/virtru-public/staging/gateway;
 docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
   -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile .
 docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
