@@ -112,6 +112,11 @@ spec:
           image: alpine:latest
           # This container runs a curl command on infinite loop. The curl posts usage data to ubbagent.
           # see https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/blob/master/docs/billing-integration.md#sending-usage-reports
+          # Inputs:
+          #  .Values.pricingPlan is from a pulldown/enum on the config page. It corresponds to the metric names.
+          #     Example: gateway___gmail_encryption__per_user_
+          #  .Values.numberOfLicenses is also from the config page.
+          #     The customer enters the number of licenses for their subscription.
           command:
           - "/bin/sh"
           - "-c"
