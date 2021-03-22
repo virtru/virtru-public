@@ -120,7 +120,7 @@ spec:
             echo "Starting billing helper" >&2
             while true
             do
-              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"endTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"value\": { \"int64Value\": {{ .Values.user }} } }"
+              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"endTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"value\": { \"int64Value\": {{ .Values.numberOfLicenses }} } }"
               echo "${postbody}" >&2
               curl -X POST -d "${postbody}" "http://localhost:4567/report"
               sleep 120
