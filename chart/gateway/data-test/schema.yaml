@@ -46,6 +46,8 @@ properties:
   numberOfLicenses:
     type: string
     default: "25"
+    x-google-marketplace:
+      type: STRING
   reportingSecret:
     type: string
     default: "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"

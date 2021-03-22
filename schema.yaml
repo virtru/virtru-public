@@ -56,43 +56,33 @@ properties:
       type: NAMESPACE
   gatewayHostname:
     title: Gateway Hostname
-    description: The hostname for your Gateway instance
+    description: The hostname for the Gateway instance(s)
     type: string
-    title: Gateway Hostname
-    description: Hostname of mail relay
     x-google-marketplace:
       type: STRING
   gatewayApiTokenName:
     title: Gateway Token ID
     description: The Gateway token ID provided by Virtru
     type: string
-    title: Gateway API Token Name
-    description: Virtru API token name string
     x-google-marketplace:
       type: STRING
   gatewayApiSecret:
-    title: Gateway Token
+    title: Gateway Token Secret
     description: The Gateway token secret provided by Virtru
     type: string
-    title: Gateway API Secret
-    description: Virtru API token secret string
     x-google-marketplace:
       type: STRING
   primaryMailingDomain:
-    title: Primary mailing domain
-    description: The primary mailing domain
-    type: string
     title: Primary Mailing Domain
     description: The primary email domain for your organization
+    type: string
     x-google-marketplace:
       type: STRING
   amplitudeToken:
-    title: Amplitude Token
-    description: The Amplitude token provided by Virtru
-    type: string
     title: Amplitude API Key
+    description: The Amplitude API token provided by Virtru
+    type: string
     default: AMPLITUDE_TOKEN
-    description: Amplitude API Key. Highly recommended, needed to capture metrics in Amplitude
     x-google-marketplace:
       type: STRING
   pricingPlan:
@@ -112,11 +102,9 @@ properties:
     x-google-marketplace:
       type: STRING
   numberOfLicenses:
-    title: Number of Seats
+    title: Number of Seats/Licensed Users
     description: The number of seats/licenses for your organization
     type: string
-    title: Number of Licensed Users
-    description: How many users do you wish to license?
     x-google-marketplace:
       type: STRING
   reportingSecret:
@@ -132,4 +120,4 @@ required:
 - primaryMailingDomain
 - amplitudeToken
 - pricingPlan
-- user
+- numberOfLicenses
