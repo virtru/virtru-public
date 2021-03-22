@@ -17,10 +17,15 @@ x-google-marketplace:
         image.tag:
           type: TAG
     ubbagent:
+      # Image for the Billing sidecar, from Google
       properties:
         ubbagentImage:
           type: FULL
-          default: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
+          # When deployed through mpdev, the deployer will use the primary image path,
+          # add /ubbagent, and arrive at the same path as the default below.
+          default: "gcr.io/virtru-public/gateway/ubbagent:2.14"
+          # At this path, there is a copy of "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
+          # This also effectively pins the ubbagent version, because Virtru is responsible for pushing to this location.
 
   clusterConstraints:
     k8sVersion: ">=1.16.0"
