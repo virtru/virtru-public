@@ -55,30 +55,40 @@ properties:
     x-google-marketplace:
       type: NAMESPACE
   gatewayHostname:
+    title: Gateway Hostname
+    description: The hostname for your Gateway instance
     type: string
     title: Gateway Hostname
     description: Hostname of mail relay
     x-google-marketplace:
       type: STRING
   gatewayApiTokenName:
+    title: Gateway Token ID
+    description: The Gateway token ID provided by Virtru
     type: string
     title: Gateway API Token Name
     description: Virtru API token name string
     x-google-marketplace:
       type: STRING
   gatewayApiSecret:
+    title: Gateway Token
+    description: The Gateway token secret provided by Virtru
     type: string
     title: Gateway API Secret
     description: Virtru API token secret string
     x-google-marketplace:
       type: STRING
   primaryMailingDomain:
+    title: Primary mailing domain
+    description: The primary mailing domain
     type: string
     title: Primary Mailing Domain
     description: The primary email domain for your organization
     x-google-marketplace:
       type: STRING
   amplitudeToken:
+    title: Amplitude Token
+    description: The Amplitude token provided by Virtru
     type: string
     title: Amplitude API Key
     default: AMPLITUDE_TOKEN
@@ -101,7 +111,9 @@ properties:
       - "gateway_network_level_encryption_with_customer_hosted_keys__per_user_"
     x-google-marketplace:
       type: STRING
-  user:
+  numberOfLicenses:
+    title: Number of Seats
+    description: The number of seats/licenses for your organization
     type: string
     title: Number of Licensed Users
     description: How many users do you wish to license?

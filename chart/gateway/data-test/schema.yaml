@@ -43,7 +43,7 @@ properties:
     default: fake-amplitudeToken
     x-google-marketplace:
       type: STRING
-  user:
+  numberOfLicenses:
     type: string
     default: "25"
   reportingSecret:
