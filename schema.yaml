@@ -16,6 +16,16 @@ x-google-marketplace:
           type: REPO_WITH_REGISTRY
         image.tag:
           type: TAG
+    ubbagent:
+      # Image for the Billing sidecar, from Google
+      properties:
+        ubbagentImage:
+          type: FULL
+          # When deployed through mpdev, the deployer will use the primary image path,
+          # add /ubbagent, and arrive at the same path as the default below.
+          default: "gcr.io/virtru-public/gateway/ubbagent:2.14"
+          # At this path, there is a copy of "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
+          # This also effectively pins the ubbagent version, because Virtru is responsible for pushing to this location.
 
   clusterConstraints:
     k8sVersion: ">=1.16.0"
@@ -51,7 +61,7 @@ properties:
       type: NAMESPACE
   gatewayHostname:
     title: Gateway Hostname
-    description: The hostname for your Gateway instance
+    description: The hostname for the Gateway instance(s)
     type: string
     x-google-marketplace:
       type: STRING
@@ -62,29 +72,44 @@ properties:
     x-google-marketplace:
       type: STRING
   gatewayApiSecret:
-    title: Gateway Token
+    title: Gateway Token Secret
     description: The Gateway token secret provided by Virtru
     type: string
     x-google-marketplace:
       type: STRING
   primaryMailingDomain:
-    title: Primary mailing domain
-    description: The primary mailing domain
+    title: Primary Mailing Domain
+    description: The primary email domain for your organization
     type: string
     x-google-marketplace:
       type: STRING
   amplitudeToken:
-    title: Amplitude Token
-    description: The Amplitude token provided by Virtru
+    title: Amplitude API Key
+    description: The Amplitude API token provided by Virtru
     type: string
     default: AMPLITUDE_TOKEN
     x-google-marketplace:
       type: STRING
+  pricingPlan:
+    type: string
+    title: Virtru Pricing Plan
+    default: gateway___gmail_encryption__per_user_
+    description: Which pricing plan did you select?
+    enum:
+      - "gateway___gmail_encryption__per_user_"
+      - "gateway___gdrive_encryption__per_user_"
+      - "gateway___gmail___gdrive_encryption__per_user_"
+      - "gateway_network_level_encryption"
+      - "gateway__gmail_encryption_with_customer_hosted_keys___per_user_"
+      - "gateway__gdrive_encryption_with_customer_hosted_keys___per_user_"
+      - "gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_"
+      - "gateway_network_level_encryption_with_customer_hosted_keys__per_user_"
+    x-google-marketplace:
+      type: STRING
   numberOfLicenses:
-    title: Number of Seats
+    title: Number of Seats/Licensed Users
     description: The number of seats/licenses for your organization
     type: string
-    default: "1"
     x-google-marketplace:
       type: STRING
   reportingSecret:
@@ -99,3 +124,5 @@ required:
 - gatewayApiSecret
 - primaryMailingDomain
 - amplitudeToken
+- pricingPlan
+- numberOfLicenses

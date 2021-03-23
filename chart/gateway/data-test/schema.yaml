@@ -45,7 +45,7 @@ properties:
       type: STRING
   numberOfLicenses:
     type: string
-    default: "1"
+    default: "25"
     x-google-marketplace:
       type: STRING
   reportingSecret:
