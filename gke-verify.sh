@@ -8,7 +8,7 @@
 
 set -eu
 
-export TAG=2.15.0;
+export TAG=2.15.2;
 export DEPLOYER_VERSION=2.15;
 export REGISTRY=gcr.io/virtru-public/staging/gateway;
 docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
