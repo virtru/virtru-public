@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels:
       {{- include "gateway.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.replicas }}
   strategy:
     type: RollingUpdate
   template:
