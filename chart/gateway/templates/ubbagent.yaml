@@ -39,49 +39,49 @@ data:
     # each one should show the number of licensed users purchased from Virtru.
 
     - name: gateway___gmail_encryption__per_user_
-      type: int
+      type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
     - name: gateway___gdrive_encryption__per_user_
-      type: int
+      type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
     - name: gateway___gmail___gdrive_encryption__per_user_
-      type: int
+      type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
     - name: gateway_network_level_encryption
-      type: int
+      type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
     - name: gateway__gmail_encryption_with_customer_hosted_keys___per_user_
-      type: int
+      type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
     - name: gateway__gdrive_encryption_with_customer_hosted_keys___per_user_
-      type: int
+      type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
     - name: gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_
-      type: int
+      type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
     - name: gateway_network_level_encryption_with_customer_hosted_keys__per_user_
-      type: int
+      type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol

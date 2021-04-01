@@ -68,13 +68,25 @@ spec:
           - "-c"
           - |
             apk add curl
-            echo "Starting billing helper" >&2
+            echo "Starting billing helper. pricing plan: {{ .Values.pricingPlan }} ; licenses {{ .Values.numberOfLicenses }}" >&2
+            # Give ubbagent time to initialize
+            sleep 10
             while true
             do
-              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"endTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"value\": { \"int64Value\": {{ .Values.numberOfLicenses }} } }"
+              # report a time range from the start of the current hour, to the end of the current hour
+              timestamp="$(date -u +"%s")"
+              rounddown="$(date -u -d@"$(($timestamp/3600*3600))" +%Y-%m-%dT%H:%M:%SZ)"
+              roundup="$(date -u -d@"$((($timestamp/3600 +1)*3600))" +%Y-%m-%dT%H:%M:%SZ)"
+              # Number of licensed users, divided by 720 (24 hours x 30 days in month)
+              # By reporting this fraction every hour, each month the cumulative total is the monthly bill.
+              # using "bc" for calculation because shell only handles integers
+              userfraction="$( echo "scale=5;{{ .Values.numberOfLicenses }}/720" | bc)"
+              echo "Users divided by hours in month: ${userfraction}" >&2
+              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$rounddown\",\"endTime\": \"$roundup\",\"value\": { \"DoubleValue\": $userfraction } }"
               echo "${postbody}" >&2
               curl -X POST -d "${postbody}" "http://localhost:4567/report"
-              sleep 120
+              # repeat this every hour
+              sleep 3600
             done
       volumes:
       - name: ubbagent-config
