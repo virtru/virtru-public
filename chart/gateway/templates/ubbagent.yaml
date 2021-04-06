@@ -37,6 +37,8 @@ data:
     # gateway_network_level_encryption_with_customer_hosted_keys__per_user_
 
     # each one should show the number of licensed users purchased from Virtru.
+    # The units are "User-days"  - metrics are billed per licensed user per day
+    # Reporting is per hour at a fractional rate.
 
     - name: gateway___gmail_encryption__per_user_
       type: double

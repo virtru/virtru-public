@@ -77,11 +77,11 @@ spec:
               timestamp="$(date -u +"%s")"
               rounddown="$(date -u -d@"$(($timestamp/3600*3600))" +%Y-%m-%dT%H:%M:%SZ)"
               roundup="$(date -u -d@"$((($timestamp/3600 +1)*3600))" +%Y-%m-%dT%H:%M:%SZ)"
-              # Number of licensed users, divided by 720 (24 hours x 30 days in month)
+              # Number of licensed users, divided by 24 (24 hours makes one user-day)
               # By reporting this fraction every hour, each month the cumulative total is the monthly bill.
               # using "bc" for calculation because shell only handles integers
-              userfraction="$( echo "scale=5;{{ .Values.numberOfLicenses }}/720" | bc)"
-              echo "Users divided by hours in month: ${userfraction}" >&2
+              userfraction="0$( echo "scale=5;{{ .Values.numberOfLicenses }}/24" | bc)"
+              echo "Users divided by hours in day: ${userfraction}" >&2
               postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$rounddown\",\"endTime\": \"$roundup\",\"value\": { \"DoubleValue\": $userfraction } }"
               echo "${postbody}" >&2
               curl -X POST -d "${postbody}" "http://localhost:4567/report"
