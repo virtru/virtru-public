@@ -8,7 +8,8 @@ spec:
   selector:
     matchLabels:
       {{- include "gateway.selectorLabels" . | nindent 6 }}
-  replicas: {{ .Values.replicas }}
+  # Use a single replica. Multiple replicas may cause duplicate billing.
+  replicas: 1
   strategy:
     type: RollingUpdate
   template:
@@ -27,63 +28,7 @@ spec:
       serviceAccountName: {{ include "gateway.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      initContainers:
-        - name: cert-generator
-          image: alpine:latest
-          # todo move this into a bash script? or remove apk add bash from the below line
-          command: ['sh', '-c', "apk update && apk upgrade && apk add bash openssl && openssl genrsa -out /etc/postfix/tls/{{ .Values.gatewayHostname }}/client.key 2048 && openssl req -new -key /etc/postfix/tls/{{ .Values.gatewayHostname }}/client.key -x509 -subj /CN={{ .Values.gatewayHostname }} -days 3650 -out /etc/postfix/tls/{{ .Values.gatewayHostname }}/client.pem"]
-          volumeMounts:
-          - name: cert-dir
-            mountPath: /etc/postfix/tls/{{ .Values.gatewayHostname }}
       containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          volumeMounts:
-          - name: cert-dir
-            mountPath: /etc/postfix/tls/{{ .Values.gatewayHostname }}
-          ports:
-            - containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          envFrom:
-          - configMapRef:
-              name: gateway
-          env:
-          - name: GATEWAY_AMPLITUDE_API_KEY
-            valueFrom:
-              secretKeyRef:
-                key: gateway-amplitude-api-key
-                name: {{ .Release.Name }}-secrets
-          - name: GATEWAY_API_TOKEN_SECRET
-            valueFrom:
-              secretKeyRef:
-                key: gateway-api-token-secret
-                name: {{ .Release.Name }}-secrets
-          - name: GATEWAY_API_TOKEN_NAME
-            valueFrom:
-              secretKeyRef:
-                key: gateway-api-token-name
-                name: {{ .Release.Name }}-secrets
-          readinessProbe:
-            tcpSocket:
-              port: 25
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
-            timeoutSeconds: 1
-          livenessProbe:
-            tcpSocket:
-              port: 25
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 2
-            timeoutSeconds: 60
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
         - name: ubbagent
           image: {{ .Values.ubbagentImage }}
           env:
@@ -123,17 +68,27 @@ spec:
           - "-c"
           - |
             apk add curl
-            echo "Starting billing helper" >&2
+            echo "Starting billing helper. pricing plan: {{ .Values.pricingPlan }} ; licenses {{ .Values.numberOfLicenses }}" >&2
+            # Give ubbagent time to initialize
+            sleep 10
             while true
             do
-              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"endTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"value\": { \"int64Value\": {{ .Values.numberOfLicenses }} } }"
+              # report a time range from the start of the current hour, to the end of the current hour
+              timestamp="$(date -u +"%s")"
+              rounddown="$(date -u -d@"$(($timestamp/3600*3600))" +%Y-%m-%dT%H:%M:%SZ)"
+              roundup="$(date -u -d@"$((($timestamp/3600 +1)*3600))" +%Y-%m-%dT%H:%M:%SZ)"
+              # Number of licensed users, divided by 24 (24 hours makes one user-day)
+              # By reporting this fraction every hour, each month the cumulative total is the monthly bill.
+              # using "bc" for calculation because shell only handles integers
+              userfraction="0$( echo "scale=5;{{ .Values.numberOfLicenses }}/24" | bc)"
+              echo "Users divided by hours in day: ${userfraction}" >&2
+              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$rounddown\",\"endTime\": \"$roundup\",\"value\": { \"DoubleValue\": $userfraction } }"
               echo "${postbody}" >&2
               curl -X POST -d "${postbody}" "http://localhost:4567/report"
-              sleep 120
+              # repeat this every hour
+              sleep 3600
             done
       volumes:
-      - name: cert-dir
-        emptyDir: {}
       - name: ubbagent-config
         configMap:
           name: ubbagent-config
