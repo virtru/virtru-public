@@ -93,17 +93,17 @@ properties:
   pricingPlan:
     type: string
     title: Virtru Pricing Plan
-    default: gateway___gmail_encryption__per_user_
+    default: gateway___gmail_encryption__per_user_per_day_
     description: Which pricing plan did you select?
     enum:
-      - "gateway___gmail_encryption__per_user_"
-      - "gateway___gdrive_encryption__per_user_"
-      - "gateway___gmail___gdrive_encryption__per_user_"
-      - "gateway_network_level_encryption"
-      - "gateway__gmail_encryption_with_customer_hosted_keys___per_user_"
-      - "gateway__gdrive_encryption_with_customer_hosted_keys___per_user_"
-      - "gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_"
-      - "gateway_network_level_encryption_with_customer_hosted_keys__per_user_"
+      - "gateway___gmail_encryption__per_user_per_day_"
+      - "gateway___gdrive_encryption__per_user_per_day_"
+      - "gateway___gmail___gdrive_encryption__per_user_per_day_"
+      - "gateway_network_level_encryption_per_day_"
+      - "gateway__gmail_encryption_with_customer_hosted_keys___per_user_per_day_"
+      - "gateway__gdrive_encryption_with_customer_hosted_keys___per_user_per_day_"
+      - "gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_per_day_"
+      - "gateway_network_level_encryption_with_customer_hosted_keys__per_user_per_day_"
     x-google-marketplace:
       type: STRING
   numberOfLicenses:

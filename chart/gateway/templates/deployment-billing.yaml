@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
+  name: billing-{{ .Chart.Name }}
   labels:
     {{- include "gateway.labels" . | nindent 4 }}
 spec:
@@ -67,26 +67,29 @@ spec:
           - "/bin/sh"
           - "-c"
           - |
+            set -x
             apk add curl
             echo "Starting billing helper. pricing plan: {{ .Values.pricingPlan }} ; licenses {{ .Values.numberOfLicenses }}" >&2
-            # Give ubbagent time to initialize
-            sleep 10
+            # Users divided by 320 reporting windows:
+            userfraction="0$( echo "scale=8;{{ .Values.numberOfLicenses }}/320" | bc)"
+
             while true
             do
+              starttimestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+              echo "Start Timestamp: ${starttimestamp}" >&2
+              # Interval of 4.5 minutes minimizes rounding error because it divides to finite number of decimals: 0.003125
+              sleep 270
               # report a time range from the start of the current hour, to the end of the current hour
-              timestamp="$(date -u +"%s")"
-              rounddown="$(date -u -d@"$(($timestamp/3600*3600))" +%Y-%m-%dT%H:%M:%SZ)"
-              roundup="$(date -u -d@"$((($timestamp/3600 +1)*3600))" +%Y-%m-%dT%H:%M:%SZ)"
-              # Number of licensed users, divided by 24 (24 hours makes one user-day)
+              endtimestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+              echo "End Timestamp: ${starttimestamp}" >&2
+
+              # Number of licensed users, divided by 320 (24 hrs/320 = 4.5 minutes)
               # By reporting this fraction every hour, each month the cumulative total is the monthly bill.
               # using "bc" for calculation because shell only handles integers
-              userfraction="0$( echo "scale=5;{{ .Values.numberOfLicenses }}/24" | bc)"
-              echo "Users divided by hours in day: ${userfraction}" >&2
-              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$rounddown\",\"endTime\": \"$roundup\",\"value\": { \"DoubleValue\": $userfraction } }"
+              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$starttimestamp\",\"endTime\": \"$endtimestamp\",\"value\": { \"DoubleValue\": $userfraction } }"
               echo "${postbody}" >&2
               curl -X POST -d "${postbody}" "http://localhost:4567/report"
-              # repeat this every hour
-              sleep 3600
+              # repeat this every 6 minutes
             done
       volumes:
       - name: ubbagent-config

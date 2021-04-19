@@ -27,62 +27,62 @@ data:
     # the agent.
 
     # This is the list of metrics from our current pricing:
-    # gateway___gmail_encryption__per_user_
-    # gateway___gdrive_encryption__per_user_
-    # gateway___gmail___gdrive_encryption__per_user_
-    # gateway_network_level_encryption
-    # gateway__gmail_encryption_with_customer_hosted_keys___per_user_
-    # gateway__gdrive_encryption_with_customer_hosted_keys___per_user_
-    # gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_
-    # gateway_network_level_encryption_with_customer_hosted_keys__per_user_
+    # gateway___gmail_encryption__per_user_per_day_
+    # gateway___gdrive_encryption__per_user_per_day_
+    # gateway___gmail___gdrive_encryption__per_user_per_day_
+    # gateway_network_level_encryption_per_day_
+    # gateway__gmail_encryption_with_customer_hosted_keys___per_user_per_day_
+    # gateway__gdrive_encryption_with_customer_hosted_keys___per_user_per_day_
+    # gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_per_day_
+    # gateway_network_level_encryption_with_customer_hosted_keys__per_user_per_day_
 
     # each one should show the number of licensed users purchased from Virtru.
     # The units are "User-days"  - metrics are billed per licensed user per day
     # Reporting is per hour at a fractional rate.
 
-    - name: gateway___gmail_encryption__per_user_
+    - name: gateway___gmail_encryption__per_user_per_day_
       type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
-    - name: gateway___gdrive_encryption__per_user_
+    - name: gateway___gdrive_encryption__per_user_per_day_
       type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
-    - name: gateway___gmail___gdrive_encryption__per_user_
+    - name: gateway___gmail___gdrive_encryption__per_user_per_day_
       type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
-    - name: gateway_network_level_encryption
+    - name: gateway_network_level_encryption_per_day_
       type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
-    - name: gateway__gmail_encryption_with_customer_hosted_keys___per_user_
+    - name: gateway__gmail_encryption_with_customer_hosted_keys___per_user_per_day_
       type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
-    - name: gateway__gdrive_encryption_with_customer_hosted_keys___per_user_
+    - name: gateway__gdrive_encryption_with_customer_hosted_keys___per_user_per_day_
       type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
-    - name: gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_
+    - name: gateway__gmail___gdrive_encryption_with_customer_hosted_keys__per_user_per_day_
       type: double
       endpoints:
       - name: on_disk
       - name: servicecontrol
       passthrough: {}
-    - name: gateway_network_level_encryption_with_customer_hosted_keys__per_user_
+    - name: gateway_network_level_encryption_with_customer_hosted_keys__per_user_per_day_
       type: double
       endpoints:
       - name: on_disk

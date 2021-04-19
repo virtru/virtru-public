@@ -17,13 +17,17 @@
 
 set -eu
 
-export TAG=2.15.2;
+export TAG=2.15.3;
 export DEPLOYER_VERSION=2.15;
-export REGISTRY=gcr.io/virtru-public/gateway;
+export REGISTRY=gcr.io/virtru-public/staging/gateway;
 docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
   -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile .
 docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
 
+# reportingSecret:
+# To actually report to the real Google ServiceControlEndpoint use "gateway-reportingsecret"
+# To make sure not to bill, use "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"}'
+
 # mpdev install to install, mpdev verify to test
 mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
---parameters='{"name": "gateway", "namespace": "virtru", "gatewayHostname": "gateway-development.virtru.com", "gatewayApiTokenName": "token", "gatewayApiSecret": "mysecret", "numberOfLicenses":"10", "primaryMailingDomain":"virtru.example.com", "reportingSecret":"gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"}'
+--parameters='{"name": "gateway", "namespace": "virtru", "gatewayHostname": "gateway-development.virtru.com", "gatewayApiTokenName": "token", "gatewayApiSecret": "mysecret", "numberOfLicenses":"10", "primaryMailingDomain":"virtru.example.com", "reportingSecret":"gateway-reportingsecret"}'
