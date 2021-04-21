@@ -89,7 +89,6 @@ spec:
               postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$starttimestamp\",\"endTime\": \"$endtimestamp\",\"value\": { \"DoubleValue\": $userfraction } }"
               echo "${postbody}" >&2
               curl -X POST -d "${postbody}" "http://localhost:4567/report"
-              # repeat this every 6 minutes
             done
       volumes:
       - name: ubbagent-config
