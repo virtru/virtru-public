@@ -90,6 +90,16 @@ properties:
     default: AMPLITUDE_TOKEN
     x-google-marketplace:
       type: STRING
+  gatewayFlow:
+    title: Gateway Usage
+    description: How you will use the Gateway
+    type: string
+    enum:
+      - "Outbound - Data Loss Prevention"
+      - "Outbound - Encrypt Everything"
+      - "Outbound - Decrypt Everything"
+      - "Inbound - Encrypt Everything"
+      - "Inbound - Decrypt Everything"
   pricingPlan:
     type: string
     title: Virtru Pricing Plan

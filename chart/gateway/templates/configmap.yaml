@@ -9,9 +9,19 @@ data:
   GATEWAY_ACM_URL:  {{ .Values.gatewayAcmUrl }}
   GATEWAY_API_TOKEN_NAME:  {{ .Values.gatewayApiTokenName }}
   GATEWAY_HOSTNAME: {{ .Values.gatewayHostname }}
-  GATEWAY_MODE: {{ .Values.gatewayMode }}
   GATEWAY_ORGANIZATION_DOMAIN: {{ .Values.primaryMailingDomain }}
-  GATEWAY_TOPOLOGY: {{ .Values.gatewayTopology }}
+  {{- if contains "data loss prevention" (lower .Values.gatewayFlow) }}
+  GATEWAY_MODE: "dlp"
+  {{- else if contains "encrypt" (lower .Values.gatewayFlow) }}
+  GATEWAY_MODE: "encrypt-everything"
+  {{- else }}
+  GATEWAY_MODE: "decrypt-everything"
+  {{- end }}
+  {{- if contains "inbound" (lower .Values.gatewayFlow) }}
+  GATEWAY_TOPOLOGY: "inbound" 
+  {{- else }}
+  GATEWAY_TOPOLOGY: "outbound"
+  {{- end }}
   GATEWAY_REMOTE_CONTENT_BASE_URL: {{ .Values.gatewayRemoteContentBaseUrl }}
   GATEWAY_PROXY_PROTOCOL: "0"
   GATEWAY_TRANSPORT_MAPS: '*=>[smtp-relay.gmail.com]:587'
