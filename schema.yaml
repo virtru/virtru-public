@@ -132,6 +132,7 @@ required:
 - gatewayHostname
 - gatewayApiTokenName
 - gatewayApiSecret
+- gatewayFlow
 - primaryMailingDomain
 - amplitudeToken
 - pricingPlan
