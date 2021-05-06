@@ -100,6 +100,9 @@ properties:
       - "Outbound - Decrypt Everything"
       - "Inbound - Encrypt Everything"
       - "Inbound - Decrypt Everything"
+    x-google-marketplace:
+      type: STRING
+    default: "Outbound - Data Loss Prevention"
   pricingPlan:
     type: string
     title: Virtru Pricing Plan
