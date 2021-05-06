@@ -57,6 +57,5 @@ gatewayRemoteContentBaseUrl: https://secure.virtru.com/start
 gatewayHostname: my-domain.example.com
 gatewayApiTokenName: my-token
 gatewayApiSecret: my-secret
-gatewayFlow: "Outbound - Data Loss Prevention" 
 gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
 ubbagentImage: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
