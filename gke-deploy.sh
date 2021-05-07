@@ -33,9 +33,9 @@ export DEPLOYER_VERSION="$(echo "${VERSION}" | cut -d'.' -f 1-2)";
 
 printf 'Using container tag = [%s] and deployer version = [%s]\n' $TAG $DEPLOYER_VERSION
 
-#docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
-#  -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}"
-#docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
+docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
+  -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}"
+docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
 
 # reportingSecret:
 # To actually report to the real Google ServiceControlEndpoint use "gateway-reportingsecret"
@@ -57,7 +57,7 @@ virtruparams
 )
 
 printf 'These are the parameters: %s\n' "${parameters}"
-exit 1
+
 # mpdev install to install, mpdev verify to test
 mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
   --parameters="${parameters}"

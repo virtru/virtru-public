@@ -18,14 +18,9 @@ export REGISTRY=gcr.io/virtru-public/staging/gateway;
 
 printf 'Using container tag = [%s] and deployer version = [%s]\n' $TAG $DEPLOYER_VERSION
 
-docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
-  -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}"
-docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
-
 # reportingSecret:
 # To actually report to the real Google ServiceControlEndpoint use "gateway-reportingsecret"
 # To make sure not to bill, use "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"}'
-
 
 parameters=$(cat <<virtruparams 
 {
@@ -44,15 +39,8 @@ parameters=$(cat <<virtruparams
 virtruparams
 )
 
-printf 'params: %s\n' "${parameters}"
-
-# mpdev install to install, mpdev verify to test
-mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
-  --parameters="${parameters}"
-
-
-docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
-  -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile .
+docker build --no-cache --build-arg TAG="${TAG}" --build-arg REGISTRY="${REGISTRY}" \
+  -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}" 
 
 docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
 
