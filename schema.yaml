@@ -92,7 +92,13 @@ properties:
       type: STRING
   gatewayFlow:
     title: Gateway Usage
-    description: How you will use the Gateway
+    description: >
+      Select your Gateway Topology / Mode from the dropdown list of options. The
+      most common for a single gateway is the Outbound DLP, which is set up
+      for encrypting outgoing email messages based off a configurable set rules
+      (managed in the Virtru Control Center by your Admin). The other options are
+      more commonly used when setting up multiple gateways to accommodate additional
+      appliances in your email routing flows.
     type: string
     enum:
       - "Outbound - Data Loss Prevention"
