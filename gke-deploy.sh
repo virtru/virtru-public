@@ -35,6 +35,7 @@ printf 'Using container tag = [%s] and deployer version = [%s]\n' $TAG $DEPLOYER
 
 docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
   -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}"
+
 docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
 
 # reportingSecret:
@@ -55,8 +56,6 @@ parameters=$(cat <<virtruparams
 }
 virtruparams
 )
-
-printf 'These are the parameters: %s\n' "${parameters}"
 
 # mpdev install to install, mpdev verify to test
 mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
