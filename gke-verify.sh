@@ -22,27 +22,11 @@ printf 'Using container tag = [%s] and deployer version = [%s]\n' $TAG $DEPLOYER
 # To actually report to the real Google ServiceControlEndpoint use "gateway-reportingsecret"
 # To make sure not to bill, use "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"}'
 
-parameters=$(cat <<virtruparams 
-{
-  "name": "gateway",
-  "namespace":
-  "virtru","gatewayHostname":
-  "gateway-development.virtru.com",
-  "gatewayApiTokenName": "token",
-  "gatewayApiSecret": "mysecret",
-  "image.repository": "${REGISTRY}",
-  "image.tag": "${TAG}",
-  "numberOfLicenses":"10",
-  "primaryMailingDomain":"virtru.example.com",
-  "reportingSecret":"gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
-}
-virtruparams
-)
-
 docker build --no-cache --build-arg TAG="${TAG}" --build-arg REGISTRY="${REGISTRY}" \
   -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}" 
 
 docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
 
 # mpdev install to install, mpdev verify to test
+# TODO: figure out how to get the parameter values into the app
 mpdev verify --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}"
