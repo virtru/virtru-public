@@ -1,6 +1,8 @@
 replicaCount: 2
 
 image:
+  repository: "gcr.io/virtru-public/staging/gateway"
+  tag: "2.14.0"
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
 

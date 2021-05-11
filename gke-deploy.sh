@@ -48,8 +48,6 @@ parameters=$(cat <<virtruparams
   "gatewayHostname": "gateway-development.virtru.com",
   "gatewayApiTokenName": "token",
   "gatewayApiSecret": "mysecret",
-  "image.repository": "${REGISTRY}",
-  "image.tag": "${TAG}",
   "numberOfLicenses":"10",
   "primaryMailingDomain":"virtru.example.com",
   "reportingSecret":"gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
@@ -58,5 +56,4 @@ virtruparams
 )
 
 # mpdev install to install, mpdev verify to test
-mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
-  --parameters="${parameters}"
+mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" --parameters="${parameters}"
