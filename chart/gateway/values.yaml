@@ -30,7 +30,8 @@ securityContext: {}
 
 service:
   type: LoadBalancer
-  port: 2525
+  port: 25
+  externalPort: 2525
   annotations:
     external-dns.alpha.kubernetes.io/hostname: gateway-development.preprod.virtru.com
 
