@@ -7,7 +7,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- include "gateway.selectorLabels" . | nindent 6 }}
+      {{- include "billing.selectorLabels" . | nindent 6 }}
   # Use a single replica. Multiple replicas may cause duplicate billing.
   replicas: 1
   strategy:
@@ -19,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "gateway.selectorLabels" . | nindent 8 }}
+        {{- include "billing.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
