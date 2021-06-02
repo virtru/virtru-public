@@ -33,6 +33,11 @@ properties:
     default: fake-gatewayApiSecret
     x-google-marketplace:
       type: STRING
+  gatewayFlow:
+    type: string
+    default: "Outbound - Data Loss Prevention"
+    x-google-marketplace:
+      type: STRING
   primaryMailingDomain:
     type: string
     default: example.com

@@ -90,6 +90,25 @@ properties:
     default: AMPLITUDE_TOKEN
     x-google-marketplace:
       type: STRING
+  gatewayFlow:
+    title: Gateway Usage
+    description: >
+      Select your Gateway Topology / Mode from the dropdown list of options. The
+      most common for a single gateway is the Outbound DLP, which is set up
+      for encrypting outgoing email messages based off a configurable set rules
+      (managed in the Virtru Control Center by your Admin). The other options are
+      more commonly used when setting up multiple gateways to accommodate additional
+      appliances in your email routing flows.
+    type: string
+    enum:
+      - "Outbound - Data Loss Prevention"
+      - "Outbound - Encrypt Everything"
+      - "Outbound - Decrypt Everything"
+      - "Inbound - Encrypt Everything"
+      - "Inbound - Decrypt Everything"
+    x-google-marketplace:
+      type: STRING
+    default: "Outbound - Data Loss Prevention"
   pricingPlan:
     type: string
     title: Virtru Pricing Plan
@@ -122,6 +141,7 @@ required:
 - gatewayHostname
 - gatewayApiTokenName
 - gatewayApiSecret
+- gatewayFlow
 - primaryMailingDomain
 - amplitudeToken
 - pricingPlan

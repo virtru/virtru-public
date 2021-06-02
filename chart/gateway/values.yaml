@@ -30,7 +30,8 @@ securityContext: {}
 
 service:
   type: LoadBalancer
-  port: 2525
+  port: 25
+  externalPort: 2525
   annotations:
     external-dns.alpha.kubernetes.io/hostname: gateway-development.preprod.virtru.com
 
@@ -57,7 +58,5 @@ gatewayRemoteContentBaseUrl: https://secure.virtru.com/start
 gatewayHostname: my-domain.example.com
 gatewayApiTokenName: my-token
 gatewayApiSecret: my-secret
-gatewayMode: encrypt-everything
-gatewayTopology: outbound
 gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
 ubbagentImage: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"

@@ -11,7 +11,7 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.service.externalPort }}
       targetPort: {{ .Values.service.port }}
       protocol: TCP
   selector:

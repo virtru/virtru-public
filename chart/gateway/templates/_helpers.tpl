@@ -5,6 +5,10 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "billing.name" -}}
+{{- printf "billing-%s" (default .Chart.Name .Values.nameOverride) | trunc 63 | trimSuffix "-" }}
+{{- end}}
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -47,6 +51,11 @@ Selector labels
 */}}
 {{- define "gateway.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "gateway.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{- define "billing.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "billing.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
