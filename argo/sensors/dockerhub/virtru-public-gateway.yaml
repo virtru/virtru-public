@@ -1,0 +1,84 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Sensor
+metadata:
+  name: dockerhub-virtru-public
+spec:
+  template:
+    serviceAccountName: argo-events-sa
+  dependencies:
+    - name: dockerhub-payload
+      eventSourceName: dockerhub-virtru-public-gateway
+      eventName: dockerhubGateway
+  triggers:
+    - template:
+        name: dockerhub-workflow-trigger
+        k8s:
+          group: argoproj.io
+          version: v1alpha1
+          resource: workflows
+          operation: create
+          source:
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: virtru-public-cicd-
+              spec:
+                entrypoint: virtru-public-pipeline
+                serviceAccountName: argo-events-sa
+                arguments:
+                  parameters:
+                  - name: dockerTag
+                    value: replaced-via-triggers-k8s-param-0
+                  - name: defaultBranch
+                    value: "main"
+                  - name: gitRepoUrl
+                    value: "https://github.com/virtru/virtru-public.git"
+                  - name: gitRepoName
+                    value: "virtru-public"
+                  - name: buildImage
+                    value: 833190184321.dkr.ecr.us-west-2.amazonaws.com/kubefirst-builder:0.6
+                  - name: appName
+                    value: "virtru-public"
+                templates:
+                - name: virtru-public-pipeline
+                  serviceAccountName: argo-events-sa
+                  steps:
+                  - - name: checkout
+                      templateRef:
+                        name: cwft-get-source-v2
+                        template: get-source-v2
+                        clusterScope: true 
+                      arguments:
+                        parameters:
+                        - name: gitRepoUrl
+                          value: "{{workflow.parameters.gitRepoUrl}}"
+                        - name: defaultBranch
+                          value: "{{workflow.parameters.defaultBranch}}"
+                        - name: gitRepoName
+                          value: "{{workflow.parameters.gitRepoName}}"
+                  - - name: publish-image-to-gcr
+                      templateRef:
+                        name: cwft-publish-image-to-gcr-virtru-public
+                        template: publish-image-to-gcr
+                        clusterScope: true
+                      arguments:
+                        artifacts:
+                        - name: repo-source
+                          from: "{{steps.checkout.outputs.artifacts.repo-source}}"
+                        parameters:
+                        - name: buildImage
+                          value: "{{workflow.parameters.buildImage}}"
+                        - name: projectName
+                          value: "virtru-public"
+                        - name: dockerTag
+                          value: "{{workflow.parameters.dockerTag}}"
+                        - name: sourceRepoDockerhub
+                          value: "virtru/gateway"
+                        - name: destinationRegistry
+                          value: "gcr.io/virtru-public/staging/gateway"
+          parameters:
+            - src:
+                dependencyName: dockerhub-payload
+                dataKey: body.push_data.tag 
+              dest: spec.arguments.parameters.0.value # todo see if you can reference name not index
