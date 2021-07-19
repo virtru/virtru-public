@@ -17,6 +17,10 @@
 
 set -eu
 
+cd chart/gateway
+helm dependency update
+cd -
+
 if [[ "${ENVIRONMENT:-}" = 'production' ]]; then
   export REGISTRY=gcr.io/virtru-public/gateway;
   printf 'Deploying to production. Using registry [%s]\n' $REGISTRY
@@ -50,7 +54,14 @@ parameters=$(cat <<virtruparams
   "gatewayApiSecret": "mysecret",
   "numberOfLicenses":"10",
   "primaryMailingDomain":"virtru.example.com",
-  "reportingSecret":"gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"
+  "reportingSecret":"gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml",
+  "cse.appSecrets.hmac.tokenId":"fake-token-id",
+  "cse.appSecrets.hmac.tokenSecret":"fake-token-id",
+  "cse.appSecrets.secretKey":"secret:fake-secret",
+  "cse.appConfig.jwksAuthzIssuers":"eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg==",
+  "cse.appConfig.jwksAuthnIssuers":"eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg==",
+  "cse.appConfig.jwtAud":"eyJhdXRobiI6InZpcnRydS10ZXN0IiwiYXV0aHoiOiJ2aXJ0cnUtdGVzdCJ9Cg==",
+  "cse.appConfig.jwtKaclsUrl":"http://cse.virtru.svc.cluster.local"
 }
 virtruparams
 )

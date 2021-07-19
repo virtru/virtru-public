@@ -1,3 +1,14 @@
 apiVersion: v2
 name: gateway
 version: 1.0.0
+# Should be updated to use github or chartmuseum urls instead of relative
+# paths after https://github.com/virtru/virtru-charts/pull/19 is merged
+dependencies:
+- name: cks
+  version: 0.4.0
+  repository: "file://../../../virtru-charts/cks"
+  condition: cks.enabled
+- name: cse
+  version: 0.1.0
+  repository: "file://../../../virtru-charts/cse"
+  condition: cse.enabled

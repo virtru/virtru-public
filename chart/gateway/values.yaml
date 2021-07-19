@@ -60,3 +60,40 @@ gatewayApiTokenName: my-token
 gatewayApiSecret: my-secret
 gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
 ubbagentImage: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
+
+cks:
+  enabled: False
+  image:
+    repository: "gcr.io/virtru-public/staging/gateway/cks"
+    tag: "v1.3.4"
+  testPodAnnotations:
+    helm.sh/hook: test-success
+  replicaCount: 1
+  service:
+    type: LoadBalancer
+  virtruAuth:
+    authTokenJson: "fake-auth-token"
+
+cse:
+  enabled: False
+  image:
+    repository: "gcr.io/virtru-public/staging/gateway/cse"
+    tag: "v3.0.1-ccbc39e"
+  testPodAnnotations:
+    helm.sh/hook: test-success
+  service:
+    type: LoadBalancer
+  appSecrets:
+    hmac:
+      tokenId: "fake-hmac-token-id"
+      tokenSecret: "fake-hmac-token-secret"
+    secretKey: "fake-secret-key"
+  appConfig:
+    accountsUrl: "https://api.virtru.com/accounts/api"
+    acmUrl: "https://api.virtru.com/acm/api"
+    jwksAuthzIssuers: "eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg=="
+    jwksAuthnIssuers: "eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg=="
+    jwtAud: "eyJhdXRobiI6InZpcnRydS10ZXN0IiwiYXV0aHoiOiJ2aXJ0cnUtdGVzdCJ9Cg=="
+    jwtKaclsUrl: "http://cse.virtru.svc.cluster.local"
+    processNumberOverride: "5"
+    useSsl: "false"

@@ -16,6 +16,18 @@ x-google-marketplace:
           type: REPO_WITH_REGISTRY
         image.tag:
           type: TAG
+    cks:
+      properties:
+        cks.image.repository:
+          type: REPO_WITH_REGISTRY
+        cks.image.tag:
+          type: TAG
+    cse:
+      properties:
+        cse.image.repository:
+          type: REPO_WITH_REGISTRY
+        cse.image.tag:
+          type: TAG
     ubbagent:
       # Image for the Billing sidecar, from Google
       properties:
@@ -135,6 +147,71 @@ properties:
     type: string
     x-google-marketplace:
       type: REPORTING_SECRET
+  cks.enabled:
+    title: CKS enabled
+    description: Whether or not CKS is enabled
+    type: boolean
+    enum:
+      - True
+      - False
+    default: False
+  cse.enabled:
+    title: CSE enabled
+    description: Whether or not CSE is enabled
+    type: boolean
+    enum:
+      - True
+      - False
+    default: True
+  cse.appSecrets.hmac.tokenId:
+    title: CSE Token ID
+    description: The CSE token ID provided by Virtru. Leave empty if not enabling CSE.
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
+  cse.appSecrets.hmac.tokenSecret:
+    title: CSE Token Secret
+    description: The CSE token secret provided by Virtru. Leave empty if not enabling CSE.
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
+  cse.appSecrets.secretKey:
+    title: CSE Secret Key
+    description: The CSE secret key. Leave empty if not enabling CSE.
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
+  cse.appConfig.jwksAuthzIssuers:
+    title: Authz Issuers
+    description: Base64-encoded authz issuer json. Leave empty if not enabling CSE.
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "default"
+  cse.appConfig.jwksAuthnIssuers:
+    title: Authn Issuers
+    description: Base64-encoded authn issuer json. Leave empty if not enabling CSE.
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "default"
+  cse.appConfig.jwtAud:
+    title: Issuer Names
+    description: Base64-encoded json containing issuer names. Leave empty if not enabling CSE.
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "default"
+  cse.appConfig.jwtKaclsUrl:
+    title: CSE URL
+    description: CSE URL. Leave empty if not enabling CSE.
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "http://cse.default.svc.cluster.local"
 required:
 - name
 - namespace
