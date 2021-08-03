@@ -185,21 +185,21 @@ properties:
       type: STRING
     default: ""
   cse.appConfig.jwksAuthzIssuers:
-    title: Authz Issuers
+    title: CSE Authz Issuers
     description: Base64-encoded authz issuer json. Leave empty if not enabling CSE.
     type: string
     x-google-marketplace:
       type: STRING
     default: "default"
   cse.appConfig.jwksAuthnIssuers:
-    title: Authn Issuers
+    title: CSE Authn Issuers
     description: Base64-encoded authn issuer json. Leave empty if not enabling CSE.
     type: string
     x-google-marketplace:
       type: STRING
     default: "default"
   cse.appConfig.jwtAud:
-    title: Issuer Names
+    title: CSE Issuer Names
     description: Base64-encoded json containing issuer names. Leave empty if not enabling CSE.
     type: string
     x-google-marketplace:

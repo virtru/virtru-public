@@ -1,10 +1,10 @@
 replicaCount: 2
 
 image:
-  repository: gcr.io/virtru-public/staging/gateway
+  repository: gcr.io/virtru-public/gateway
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.14.0"
+  tag: "2.15.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -64,7 +64,7 @@ ubbagentImage: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
 cks:
   enabled: False
   image:
-    repository: "gcr.io/virtru-public/staging/gateway/cks"
+    repository: "gcr.io/virtru-public/gateway/cks"
     tag: "v1.3.4"
   testPodAnnotations:
     helm.sh/hook: test-success
@@ -77,7 +77,7 @@ cks:
 cse:
   enabled: False
   image:
-    repository: "gcr.io/virtru-public/staging/gateway/cse"
+    repository: "gcr.io/virtru-public/gateway/cse"
     tag: "v3.0.1-ccbc39e"
   testPodAnnotations:
     helm.sh/hook: test-success
@@ -96,4 +96,4 @@ cse:
     jwtAud: "eyJhdXRobiI6InZpcnRydS10ZXN0IiwiYXV0aHoiOiJ2aXJ0cnUtdGVzdCJ9Cg=="
     jwtKaclsUrl: "http://cse.virtru.svc.cluster.local"
     processNumberOverride: "5"
-    useSsl: "false"
+    useSsl: "true"
