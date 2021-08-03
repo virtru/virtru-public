@@ -16,12 +16,6 @@ x-google-marketplace:
           type: REPO_WITH_REGISTRY
         image.tag:
           type: TAG
-    cks:
-      properties:
-        cks.image.repository:
-          type: REPO_WITH_REGISTRY
-        cks.image.tag:
-          type: TAG
     cse:
       properties:
         cse.image.repository:
@@ -147,67 +141,59 @@ properties:
     type: string
     x-google-marketplace:
       type: REPORTING_SECRET
-  cks.enabled:
-    title: CKS enabled
-    description: Whether or not CKS is enabled
-    type: boolean
-    enum:
-      - True
-      - False
-    default: False
   cse.enabled:
-    title: CSE enabled
-    description: Whether or not CSE is enabled
+    title: Include Google Client Side Encryption Key Management Server (KMS)
+    description: Standard Plan Required
     type: boolean
     enum:
       - True
       - False
     default: True
   cse.appSecrets.hmac.tokenId:
-    title: CSE Token ID
-    description: The CSE token ID provided by Virtru. Leave empty if not enabling CSE.
+    title: Google Client Side Encryption KMS Token ID
+    description: Token ID Provided by Virtru. Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
       type: STRING
     default: ""
   cse.appSecrets.hmac.tokenSecret:
-    title: CSE Token Secret
-    description: The CSE token secret provided by Virtru. Leave empty if not enabling CSE.
+    title: Google Client Side Encryption KMS Token Secret
+    description: Token Secret Provided by Virtru. Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
       type: STRING
     default: ""
   cse.appSecrets.secretKey:
-    title: CSE Secret Key
-    description: The CSE secret key. Leave empty if not enabling CSE.
+    title: Google Client Side Encryption KMS Secret Key
+    description: Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
       type: STRING
     default: ""
   cse.appConfig.jwksAuthzIssuers:
-    title: CSE Authz Issuers
-    description: Base64-encoded authz issuer json. Leave empty if not enabling CSE.
+    title: Authz Issuers
+    description: Base64-encoded authz issuer json. Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
       type: STRING
     default: "default"
   cse.appConfig.jwksAuthnIssuers:
-    title: CSE Authn Issuers
-    description: Base64-encoded authn issuer json. Leave empty if not enabling CSE.
+    title: Authn Issuers
+    description: Base64-encoded authn issuer json. Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
       type: STRING
     default: "default"
   cse.appConfig.jwtAud:
-    title: CSE Issuer Names
-    description: Base64-encoded json containing issuer names. Leave empty if not enabling CSE.
+    title: Issuer Names
+    description: Base64-encoded json containing issuer names. Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
       type: STRING
     default: "default"
   cse.appConfig.jwtKaclsUrl:
-    title: CSE URL
-    description: CSE URL. Leave empty if not enabling CSE.
+    title: Google Client Side Encryption URL
+    description: Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
       type: STRING
