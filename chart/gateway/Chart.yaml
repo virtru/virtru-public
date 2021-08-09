@@ -5,7 +5,7 @@ version: 1.0.0
 # paths after https://github.com/virtru/virtru-charts/pull/19 is merged
 dependencies:
 - name: cse
-  version: 0.1.0
+  version: 0.2.0
   repository: https://charts.production.virtru.com
   condition: cse.enabled
 - name: cks

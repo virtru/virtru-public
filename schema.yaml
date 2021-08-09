@@ -170,6 +170,20 @@ properties:
     x-google-marketplace:
       type: STRING
     default: ""
+  cse.appSecrets.ssl.certificate:
+    title: Google Client Side Encryption SSL Certificate
+    description: Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
+  cse.appSecrets.ssl.privateKey:
+    title: Google Client Side Encryption SSL Private Key
+    description: Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
   cse.appConfig.jwksAuthzIssuers:
     title: Authz Issuers
     description: Base64-encoded authz issuer json. Leave blank if not deploying Google Client Side Encryption KMS
@@ -193,6 +207,13 @@ properties:
     default: "default"
   cse.appConfig.jwtKaclsUrl:
     title: Google Client Side Encryption URL
+    description: Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "http://cse.default.svc.cluster.local"
+  cse.ingress.host:
+    title: Google Client Side Encryption Domain Name
     description: Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
