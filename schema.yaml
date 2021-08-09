@@ -16,6 +16,12 @@ x-google-marketplace:
           type: REPO_WITH_REGISTRY
         image.tag:
           type: TAG
+    cse:
+      properties:
+        cse.image.repository:
+          type: REPO_WITH_REGISTRY
+        cse.image.tag:
+          type: TAG
     ubbagent:
       # Image for the Billing sidecar, from Google
       properties:
@@ -135,6 +141,84 @@ properties:
     type: string
     x-google-marketplace:
       type: REPORTING_SECRET
+  cse.enabled:
+    title: Include Google Client Side Encryption Key Management Server (KMS)
+    description: Standard Plan Required
+    type: boolean
+    enum:
+      - True
+      - False
+    default: True
+  cse.appSecrets.hmac.tokenId:
+    title: Google Client Side Encryption KMS Token ID
+    description: Token ID Provided by Virtru. Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
+  cse.appSecrets.hmac.tokenSecret:
+    title: Google Client Side Encryption KMS Token Secret
+    description: Token Secret Provided by Virtru. Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
+  cse.appSecrets.secretKey:
+    title: Google Client Side Encryption KMS Secret Key
+    description: Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
+  cse.appSecrets.ssl.certificate:
+    title: Google Client Side Encryption SSL Certificate
+    description: Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
+  cse.appSecrets.ssl.privateKey:
+    title: Google Client Side Encryption SSL Private Key
+    description: Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: ""
+  cse.appConfig.jwksAuthzIssuers:
+    title: Authz Issuers
+    description: Base64-encoded authz issuer json. Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "default"
+  cse.appConfig.jwksAuthnIssuers:
+    title: Authn Issuers
+    description: Base64-encoded authn issuer json. Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "default"
+  cse.appConfig.jwtAud:
+    title: Issuer Names
+    description: Base64-encoded json containing issuer names. Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "default"
+  cse.appConfig.jwtKaclsUrl:
+    title: Google Client Side Encryption URL
+    description: Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "http://cse.default.svc.cluster.local"
+  cse.ingress.host:
+    title: Google Client Side Encryption Domain Name
+    description: Leave blank if not deploying Google Client Side Encryption KMS
+    type: string
+    x-google-marketplace:
+      type: STRING
+    default: "http://cse.default.svc.cluster.local"
 required:
 - name
 - namespace

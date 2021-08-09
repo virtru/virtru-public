@@ -1,10 +1,10 @@
 replicaCount: 2
 
 image:
-  repository: gcr.io/virtru-public/staging/gateway
+  repository: gcr.io/virtru-public/gateway
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.14.0"
+  tag: "2.15.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -60,3 +60,47 @@ gatewayApiTokenName: my-token
 gatewayApiSecret: my-secret
 gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
 ubbagentImage: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
+
+cks:
+  enabled: False
+  image:
+    repository: "gcr.io/virtru-public/gateway/cks"
+    tag: "v1.3.4"
+  testPodAnnotations:
+    helm.sh/hook: test-success
+  replicaCount: 1
+  service:
+    type: LoadBalancer
+  virtruAuth:
+    authTokenJson: "fake-auth-token"
+
+cse:
+  enabled: False
+  ingress:
+    enabled: true
+    host: "http://cse.default.svc.cluster.local"
+  image:
+    repository: "gcr.io/virtru-public/gateway/cse"
+    tag: "v3.0.1-ccbc39e"
+  imagePullSecrets: []
+  testPodAnnotations:
+    helm.sh/hook: test-success
+  service:
+    type: LoadBalancer
+  appSecrets:
+    hmac:
+      tokenId: "fake-hmac-token-id"
+      tokenSecret: "fake-hmac-token-secret"
+    secretKey: "fake-secret-key"
+    ssl:
+      certificate: "fake-certificate"
+      privateKey: "fake-private-key"
+  appConfig:
+    accountsUrl: "https://api.virtru.com/accounts/api"
+    acmUrl: "https://api.virtru.com/acm/api"
+    jwksAuthzIssuers: "eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg=="
+    jwksAuthnIssuers: "eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg=="
+    jwtAud: "eyJhdXRobiI6InZpcnRydS10ZXN0IiwiYXV0aHoiOiJ2aXJ0cnUtdGVzdCJ9Cg=="
+    jwtKaclsUrl: "http://cse.default.svc.cluster.local"
+    processNumberOverride: "5"
+    useSsl: "true"
