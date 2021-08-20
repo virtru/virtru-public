@@ -63,7 +63,7 @@ parameters=$(cat <<virtruparams
   "cse.appConfig.jwksAuthzIssuers":"eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg==",
   "cse.appConfig.jwksAuthnIssuers":"eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg==",
   "cse.appConfig.jwtAud":"eyJhdXRobiI6InZpcnRydS10ZXN0IiwiYXV0aHoiOiJ2aXJ0cnUtdGVzdCJ9Cg==",
-  "cse.appConfig.jwtKaclsUrl":"cse.virtru.svc.cluster.local",
+  "cse.appConfig.jwtKaclsUrl":"http://cse.virtru.svc.cluster.local",
   "cse.ingress.host":"cse.virtru.svc.cluster.local"
 }
 virtruparams
