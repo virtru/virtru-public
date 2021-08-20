@@ -218,7 +218,7 @@ properties:
     type: string
     x-google-marketplace:
       type: STRING
-    default: "http://cse.default.svc.cluster.local"
+    default: "cse.default.svc.cluster.local"
 required:
 - name
 - namespace

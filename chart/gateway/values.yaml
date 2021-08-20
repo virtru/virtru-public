@@ -81,7 +81,7 @@ cse:
     host: "http://cse.default.svc.cluster.local"
   image:
     repository: "gcr.io/virtru-public/gateway/cse"
-    tag: "v3.0.1-ccbc39e"
+    tag: "v3.0.1"
   imagePullSecrets: []
   testPodAnnotations:
     helm.sh/hook: test-success
