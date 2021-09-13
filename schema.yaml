@@ -172,14 +172,14 @@ properties:
     default: ""
   cse.appSecrets.ssl.certificate:
     title: Google Client Side Encryption SSL Certificate
-    description: Leave blank if not deploying Google Client Side Encryption KMS
+    description: Base64-encoded SSL certificate. Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
       type: STRING
     default: ""
   cse.appSecrets.ssl.privateKey:
     title: Google Client Side Encryption SSL Private Key
-    description: Leave blank if not deploying Google Client Side Encryption KMS
+    description: Base64-encoded SSL private key. Leave blank if not deploying Google Client Side Encryption KMS
     type: string
     x-google-marketplace:
       type: STRING

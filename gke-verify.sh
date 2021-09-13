@@ -8,13 +8,19 @@
 
 set -eu
 
-
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 VERSION="$(< "${SCRIPT_DIR}/VERSION" )"
 
 export TAG="${VERSION}";
 export DEPLOYER_VERSION="$(echo "${VERSION}" | cut -d'.' -f 1-2)";
-export REGISTRY=gcr.io/virtru-public/staging/gateway;
+
+if [[ "${ENVIRONMENT:-}" = 'production' ]]; then
+  export REGISTRY=gcr.io/virtru-public/gateway;
+  printf 'Deploying to production. Using registry [%s]\n' $REGISTRY
+else
+  export REGISTRY=gcr.io/virtru-public/staging/gateway;
+  printf 'Deploying to staging. Using registry [%s]\n' $REGISTRY
+fi
 
 printf 'Using container tag = [%s] and deployer version = [%s]\n' $TAG $DEPLOYER_VERSION
 
