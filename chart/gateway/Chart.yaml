@@ -1,10 +1,10 @@
 apiVersion: v2
 name: gateway
-version: 1.1.0
+version: 1.2.0
 dependencies:
 - name: cse
-  version: 0.3.1
-  repository: https://charts.production.virtru.com
+  version: 0.4.1
+  repository: "file://../../../../virtru-corp/virtru-charts/cse"
   condition: cse.enabled
 - name: cks
   version: 0.4.0
