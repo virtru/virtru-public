@@ -77,7 +77,7 @@ cks:
 cse:
   enabled: False
   ingress:
-    enabled: true
+    enabled: false
     host: "http://cse.default.svc.cluster.local"
   image:
     repository: "gcr.io/virtru-public/gateway/cse"
@@ -103,4 +103,3 @@ cse:
     jwtAud: "eyJhdXRobiI6InZpcnRydS10ZXN0IiwiYXV0aHoiOiJ2aXJ0cnUtdGVzdCJ9Cg=="
     jwtKaclsUrl: "http://cse.default.svc.cluster.local"
     processNumberOverride: "5"
-    useSsl: "true"
