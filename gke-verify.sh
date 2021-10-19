@@ -8,6 +8,10 @@
 
 set -eu
 
+cd chart/gateway
+helm dependency update
+cd -
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 VERSION="$(< "${SCRIPT_DIR}/VERSION" )"
 

@@ -146,9 +146,9 @@ properties:
     description: Standard Plan Required
     type: boolean
     enum:
-      - True
-      - False
-    default: True
+      - true
+      - false
+    default: true
   cse.appSecrets.hmac.tokenId:
     title: Google Client Side Encryption KMS Token ID
     description: Token ID Provided by Virtru. Leave blank if not deploying Google Client Side Encryption KMS

@@ -69,15 +69,15 @@ spec:
           readinessProbe:
             tcpSocket:
               port: 25
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 5
             successThreshold: 1
             failureThreshold: 3
-            timeoutSeconds: 1
+            timeoutSeconds: 20
           livenessProbe:
             tcpSocket:
               port: 25
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             periodSeconds: 5
             successThreshold: 1
             failureThreshold: 2
