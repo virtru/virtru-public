@@ -46,3 +46,6 @@ COPY --from=build /tmp/$CHART_NAME.tar.gz /data/chart/
 COPY --from=build /tmp/test/$CHART_NAME.tar.gz /data-test/chart/
 COPY --from=build /tmp/apptest/schema.yaml /data-test/
 COPY --from=build /tmp/schema.yaml /data/
+
+ENV WAIT_FOR_READY_TIMEOUT 3600
+ENV TESTER_TIMEOUT 3600

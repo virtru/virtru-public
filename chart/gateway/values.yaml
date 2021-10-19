@@ -62,12 +62,14 @@ gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
 ubbagentImage: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
 
 cks:
-  enabled: False
+  enabled: false
   image:
     repository: "gcr.io/virtru-public/gateway/cks"
     tag: "v1.3.4"
-  testPodAnnotations:
-    helm.sh/hook: test-success
+  testerPod:
+    enabled: false
+    annotations:
+      helm.sh/hook: test-success
   replicaCount: 1
   service:
     type: LoadBalancer
@@ -75,16 +77,18 @@ cks:
     authTokenJson: "fake-auth-token"
 
 cse:
-  enabled: False
+  enabled: true
   ingress:
-    enabled: true
+    enabled: false
     host: "http://cse.default.svc.cluster.local"
   image:
     repository: "gcr.io/virtru-public/gateway/cse"
     tag: "v3.0.1"
   imagePullSecrets: []
-  testPodAnnotations:
-    helm.sh/hook: test-success
+  testerPod:
+    enabled: false
+    annotations:
+      helm.sh/hook: test-success
   service:
     type: LoadBalancer
   appSecrets:
@@ -103,4 +107,3 @@ cse:
     jwtAud: "eyJhdXRobiI6InZpcnRydS10ZXN0IiwiYXV0aHoiOiJ2aXJ0cnUtdGVzdCJ9Cg=="
     jwtKaclsUrl: "http://cse.default.svc.cluster.local"
     processNumberOverride: "5"
-    useSsl: "true"
