@@ -29,6 +29,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - CORE-2736 ([#14](https://github.com/virtru/virtru-public/pull/14)): _minor_
   - Add CSE and CKS dependencies
 
+## [3.4.3](https://github.com/virtru/virtru-public/compare/gateway-3.4.2...3.4.3)
+- NOREF ([#19](https://github.com/virtru/virtru-public/pull/19)): _patch_
+  - No code changes, identical to 3.4.2, releasing to account for rebuilt deployer image
+
 ## [3.4.2](https://github.com/virtru/virtru-public/compare/gateway-3.4.2...gateway-2.15.3)
 - CORE-2717 ([#12](https://github.com/virtru/virtru-public/pull/12)): _patch_
   - Add this Changlog with some retroactive history
