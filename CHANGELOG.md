@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/virtru/virtru-public/compare/main...HEAD)
 
+## [3.6.0](https://github.com/virtru/virtru-public/compare/3.5.4...3.6.0)
+- CORE-4042 ([#21](https://github.com/virtru/virtru-public/pull/21)) _patch_
+  - Update gateway container to 2.19.1
+
 ## [3.5.4](https://github.com/virtru/virtru-public/compare/3.5.3...3.5.4)
 - CORE-3558 ([#18](https://github.com/virtru/virtru-public/pull/18)) _patch_
   - Disable connection tests for CSE and CKS
