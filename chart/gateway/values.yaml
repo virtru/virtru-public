@@ -4,7 +4,7 @@ image:
   repository: gcr.io/virtru-public/gateway
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.15.0"
+  tag: "2.19.1"
 
 imagePullSecrets: []
 nameOverride: ""
