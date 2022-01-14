@@ -86,7 +86,7 @@ spec:
               # Number of licensed users, divided by 320 (24 hrs/320 = 4.5 minutes)
               # By reporting this fraction every hour, each month the cumulative total is the monthly bill.
               # using "bc" for calculation because shell only handles integers
-              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$starttimestamp\",\"endTime\": \"$endtimestamp\",\"value\": { \"DoubleValue\": $userfraction } }"
+              postbody="{\"name\":\"{{ .Values.pricingPlan }}\", \"startTime\": \"$starttimestamp\",\"endTime\": \"$endtimestamp\",\"value\": { \"doubleValue\": $userfraction } }"
               echo "${postbody}" >&2
               curl -X POST -d "${postbody}" "http://localhost:4567/report"
             done
