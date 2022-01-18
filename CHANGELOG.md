@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/virtru/virtru-public/compare/main...HEAD)
 ## [3.6.1](https://github.com/virtru/virtru-public/compare/3.6.0...3.6.1)
 - CORE-3798 ([#22](https://github.com/virtru/virtru-public/pull/22)) _patch_
   - Use the right field to process billing info
