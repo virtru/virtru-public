@@ -3,6 +3,12 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [3.9.0](https://github.com/virtru/virtru-public/compare/3.6.0...3.9.0)
+- SRE-2913([#23](https://github.com/virtru/virtru-public/pull/23)) _minor_
+  - Update virtru-charts versions
+  - Update image versions
+  - Update version to be in sync with what's deployed in marketplace
+
 ## [3.7.0](https://github.com/virtru/virtru-public/compare/3.6.0...3.7.0)
 - CORE-3798 ([#22](https://github.com/virtru/virtru-public/pull/22)) _minor_
   - Use the right field to process billing info
