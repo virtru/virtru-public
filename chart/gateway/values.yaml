@@ -4,7 +4,7 @@ image:
   repository: gcr.io/virtru-public/gateway
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2.19.1"
+  tag: "2.21.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -65,7 +65,7 @@ cks:
   enabled: false
   image:
     repository: "gcr.io/virtru-public/gateway/cks"
-    tag: "v1.3.4"
+    tag: "v1.4.2"
   testerPod:
     enabled: false
     annotations:
@@ -83,7 +83,7 @@ cse:
     host: "http://cse.default.svc.cluster.local"
   image:
     repository: "gcr.io/virtru-public/gateway/cse"
-    tag: "v3.0.1"
+    tag: "v4.0.1"
   imagePullSecrets: []
   testerPod:
     enabled: false
