@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - Update image version for CKS to v1.4.5
   - Update image version for CSE to v4.1.0
   - Update image version for Gateway to v2.25.0
+  - Updated dev.Dockerfile to be debian11
 
 ## [3.9.0](https://github.com/virtru/virtru-public/compare/3.6.0...3.9.0)
 - SRE-2913([#23](https://github.com/virtru/virtru-public/pull/23)) _minor_
