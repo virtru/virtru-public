@@ -3,9 +3,16 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/virtru/virtru-public/compare/3.10.0...main)
-  - BACK-832 ([#27](https://github.com/virtru/virtru-public/pull/27)) _minor_
-    - Point at new charts so that we don't use deprecated Kubernetes APIs
+## [3.12.0](https://github.com/virtru/virtru-public/compare/3.10.0...3.12.0)
+  - Point at new charts so that we don't use deprecated Kubernetes APIs
+  - Update CSE to v5.0.2
+  - Update CKS to v1.5.0
+  - Update Gateway to 2.27.0
+
+## [3.11.0](https://github.com/virtru/virtru-public/compare/3.10.0...3.12.0)
+  - Update CSE to v5.0.0
+  - Update CKS to v1.4.7
+  - Update Gateway to 2.26.0
 
 ## [3.10.0](https://github.com/virtru/virtru-public/compare/3.9.0...3.10.0) _minor_
   - Update image version for CKS to v1.4.5
