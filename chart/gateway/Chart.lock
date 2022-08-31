@@ -1,0 +1,9 @@
+dependencies:
+- name: cse
+  repository: https://virtru-corp.github.io/virtru-charts/
+  version: 0.7.1
+- name: cks
+  repository: https://virtru-corp.github.io/virtru-charts/
+  version: 0.7.2
+digest: sha256:5dcf10c2fdda7d5b0eaa37cac661cfe67cfb6393a4a4d691537990231ae60c84
+generated: "2022-08-31T14:37:54.891876+02:00"
