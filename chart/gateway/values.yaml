@@ -1,9 +1,9 @@
 replicaCount: 2
 
 image:
-  repository: gcr.io/virtru-public/gateway
   pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
+  # These are overwritted in schema.yaml
+  repository: ""
   tag: ""
 
 imagePullSecrets: []
@@ -62,6 +62,10 @@ gatewayTransportMaps: '*=>[smtp-relay.gmail.com]:587'
 ubbagentImage: "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
 
 cks:
+  enabled: false
+  # These are overwritted in schema.yaml
+  repository: ""
+  tag: ""
   testerPod:
     enabled: false
     annotations:
@@ -74,6 +78,9 @@ cks:
 
 cse:
   enabled: true
+  # These are overwritted in schema.yaml
+  repository: ""
+  tag: ""
   ingress:
     enabled: false
     host: "http://cse.default.svc.cluster.local"
