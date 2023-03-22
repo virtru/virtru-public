@@ -23,7 +23,7 @@ ADD schema.yaml /tmp/schema.yaml
 
 # gcr.io/virtru-public/gateway
 ARG REGISTRY
-# 2.12.0
+# 3.15.0
 ARG TAG
 
 RUN cat /tmp/schema.yaml \
