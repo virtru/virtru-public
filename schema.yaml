@@ -22,6 +22,12 @@ x-google-marketplace:
           type: REPO_WITH_REGISTRY
         cse.image.tag:
           type: TAG
+    cks:
+      properties:
+        cks.image.repository:
+          type: REPO_WITH_REGISTRY
+        cks.image.tag:
+          type: TAG
     ubbagent:
       # Image for the Billing sidecar, from Google
       properties:
