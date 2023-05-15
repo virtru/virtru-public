@@ -16,7 +16,7 @@ RUN cat /tmp/schema.yaml \
     && mv /tmp/schema.yaml.new /tmp/schema.yaml
 RUN cat /tmp/schema.yaml
 
-FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.4
+FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.8
 
 
 COPY --from=build /tmp/gateway.tar.gz /data/chart/
