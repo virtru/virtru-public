@@ -32,7 +32,7 @@ printf 'Using container tag = [%s] and deployer version = [%s]\n' $TAG $DEPLOYER
 # To actually report to the real Google ServiceControlEndpoint use "gateway-reportingsecret"
 # To make sure not to bill, use "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"}'
 
-docker build --no-cache --build-arg TAG="${TAG}" --build-arg REGISTRY="${REGISTRY}" \
+docker build --platform linux/amd64 --no-cache --build-arg TAG="${TAG}" --build-arg REGISTRY="${REGISTRY}" \
   -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}" 
 
 docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
