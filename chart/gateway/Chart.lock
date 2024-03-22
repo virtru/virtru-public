@@ -4,6 +4,6 @@ dependencies:
   version: 0.7.4
 - name: cks
   repository: https://virtru-corp.github.io/virtru-charts/
-  version: 0.7.5
-digest: sha256:f4d9f308eb149d7bfa35ddcef00bb9b7983e8122019c55537427f3507ae3e144
-generated: "2023-05-12T15:26:44.087584-04:00"
+  version: 0.7.7
+digest: sha256:266f7935ed89974a8f11497d8e2ffca88fab9257a6b4c07a297ace8670152d34
+generated: "2023-11-20T10:49:23.518311-05:00"

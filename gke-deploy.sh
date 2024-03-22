@@ -37,7 +37,7 @@ export DEPLOYER_VERSION="$(echo "${VERSION}" | cut -d'.' -f 1-2)";
 
 printf 'Using container tag = [%s] and deployer version = [%s]\n' $TAG $DEPLOYER_VERSION
 
-docker build --no-cache --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
+docker build --no-cache --platform linux/amd64 --build-arg TAG=$TAG --build-arg REGISTRY=$REGISTRY \
   -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}"
 
 docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
