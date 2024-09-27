@@ -19,10 +19,10 @@ export TAG="${VERSION}";
 export DEPLOYER_VERSION="$(echo "${VERSION}" | cut -d'.' -f 1-2)";
 
 if [[ "${ENVIRONMENT:-}" = 'production' ]]; then
-  export REGISTRY=gcr.io/virtru-public/gateway;
+  export REGISTRY=us-docker.pkg.dev/virtru-public/gateway;
   printf 'Deploying to production. Using registry [%s]\n' $REGISTRY
 else
-  export REGISTRY=gcr.io/virtru-public/staging/gateway;
+  export REGISTRY=us-docker.pkg.dev/virtru-public/staging/gateway;
   printf 'Deploying to staging. Using registry [%s]\n' $REGISTRY
 fi
 
