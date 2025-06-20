@@ -22,7 +22,7 @@ if [[ "${ENVIRONMENT:-}" = 'production' ]]; then
   export REGISTRY=gcr.io/virtru-public/gateway;
   printf 'Deploying to production. Using registry [%s]\n' $REGISTRY
 else
-  export REGISTRY=gcr.io/prj-hosted-gateway-dev-qvec/gateway;
+  export REGISTRY=us-docker.pkg.dev/prj-hosted-gateway-dev-qvec/gateway/gateway;
   printf 'Deploying to development. Using registry [%s]\n' $REGISTRY
 fi
 
