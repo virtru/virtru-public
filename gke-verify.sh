@@ -22,8 +22,8 @@ if [[ "${ENVIRONMENT:-}" = 'production' ]]; then
   export REGISTRY=gcr.io/virtru-public/gateway;
   printf 'Deploying to production. Using registry [%s]\n' $REGISTRY
 else
-  export REGISTRY=gcr.io/virtru-public/staging/gateway;
-  printf 'Deploying to staging. Using registry [%s]\n' $REGISTRY
+  export REGISTRY=gcr.io/prj-hosted-gateway-dev-qvec/gateway;
+  printf 'Deploying to development. Using registry [%s]\n' $REGISTRY
 fi
 
 printf 'Using container tag = [%s] and deployer version = [%s]\n' $TAG $DEPLOYER_VERSION
@@ -33,7 +33,7 @@ printf 'Using container tag = [%s] and deployer version = [%s]\n' $TAG $DEPLOYER
 # To make sure not to bill, use "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml"}'
 
 docker build --platform linux/amd64 --no-cache --build-arg TAG="${TAG}" --build-arg REGISTRY="${REGISTRY}" \
-  -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}" 
+  -t "${REGISTRY}/deployer:${DEPLOYER_VERSION}" -f dev.Dockerfile "${SCRIPT_DIR}"
 
 docker push "${REGISTRY}/deployer:${DEPLOYER_VERSION}"
 
