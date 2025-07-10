@@ -1,0 +1,184 @@
+name: 🚀 Deploy Gateway to Dev GKE
+
+on:
+  workflow_dispatch:
+    inputs:
+      namespace:
+        description: 'Namespace for deployment'
+        required: true
+        default: 'virtru'
+      gateway_hostname:
+        description: 'Gateway hostname'
+        required: true
+        default: 'gateway-development.virtru.com'
+      primary_mailing_domain:
+        description: 'Primary mailing domain'
+        required: true
+        default: 'virtru.example.com'
+      number_of_licenses:
+        description: 'Number of licenses'
+        required: true
+        default: '10'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy-gateway:
+    runs-on: virtru-scale-set-runner
+
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        with:
+          persist-credentials: false
+
+      - name: "Authenticate to Google Cloud"
+        id: "gcp-auth"
+        uses: google-github-actions/auth@55bd3a7c6e2ae7cf1877fd1ccb9d54c0503c457c # v2.1.5
+        with:
+          workload_identity_provider: 'projects/1053957112592/locations/global/workloadIdentityPools/github-actions-oidc-pool/providers/github-actions-oidc-provider'
+          service_account: 'github-actions-sa@prj-infra-automation-ktbz.iam.gserviceaccount.com'
+          token_format: 'access_token'
+
+      - name: 'Set up Cloud SDK'
+        id: setup-gcloud
+        uses: google-github-actions/setup-gcloud@f0990588f1e5b5af6827153b93673613abdc6ec7 # v2.1.1
+        with:
+          version: '>= 363.0.0'
+          install_components: 'kubectl'
+
+      - name: "Setup Helm"
+        uses: azure/setup-helm@1e6d3aaf479f04f23407416f5f3a9f6701254b98 # v3.11.1
+        with:
+          version: 'v3.11.1'
+
+      - name: "Install mpdev"
+        run: |
+          curl -L -o mpdev.tar.gz https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/releases/download/v0.11.8/mpdev_linux_amd64.tar.gz
+          tar -xzvf mpdev.tar.gz
+          chmod +x mpdev
+          sudo mv mpdev /usr/local/bin/
+          mpdev version
+
+      - name: "Docker login to Artifact Registry"
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
+        with:
+          registry: us-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: "Connect to Dev GKE Cluster"
+        uses: google-github-actions/get-gke-credentials@4d042ce21867b02551fee51e20bffc05689d8f94
+        with:
+          cluster_name: hg-dev-green
+
+      - name: "Update Helm dependencies"
+        run: |
+          cd chart/gateway
+          helm dependency update
+          cd -
+
+      - name: "Set version and registry variables"
+        run: |
+          VERSION=$(cat VERSION)
+          echo "TAG=${VERSION}" >> $GITHUB_ENV
+          echo "DEPLOYER_VERSION=$(echo ${VERSION} | cut -d'.' -f 1-2)" >> $GITHUB_ENV
+          echo "REGISTRY=us-docker.pkg.dev/prj-hosted-gateway-dev-qvec/gateway/gateway" >> $GITHUB_ENV
+          
+          echo "::notice::Deploying to DEVELOPMENT environment"
+
+      - name: "Install Application CRD"
+        run: |
+          kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
+
+      - name: "Build deployer image"
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0
+        with:
+          context: .
+          file: dev.Dockerfile
+          push: true
+          build-args: |
+            TAG=${{ env.TAG }}
+            REGISTRY=${{ env.REGISTRY }}
+          tags: ${{ env.REGISTRY }}/deployer:${{ env.DEPLOYER_VERSION }}
+          platforms: linux/amd64
+
+      - name: "Verify deployer image in registry"
+        run: |
+          echo "Verifying image presence in registry..."
+          sleep 5 # Small delay to ensure image visibility
+          
+          if gcloud artifacts docker images describe "${{ env.REGISTRY }}/deployer:${{ env.DEPLOYER_VERSION }}"; then
+            echo "✅ Image successfully published and available in Artifact Registry"
+          else
+            echo "⚠️ Image not found in Artifact Registry after pushing."
+          fi
+
+      - name: "Create deployment parameters"
+        run: |
+          cat > deploy_parameters.json << EOF
+          {
+            "name": "gateway",
+            "namespace": "${{ github.event.inputs.namespace }}",
+            "gatewayHostname": "${{ github.event.inputs.gateway_hostname }}",
+            "gatewayApiTokenName": "token",
+            "gatewayApiSecret": "mysecret",
+            "gatewayFlow": "Outbound - Data Loss Prevention",
+            "primaryMailingDomain": "${{ github.event.inputs.primary_mailing_domain }}",
+            "amplitudeToken": "fake-token",
+            "pricingPlan": "gateway___gmail_encryption__per_user_per_day_",
+            "numberOfLicenses": "${{ github.event.inputs.number_of_licenses }}",
+            "reportingSecret": "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml",
+            "cse.appSecrets.hmac.tokenId": "my-hmac-token-id",
+            "cse.appSecrets.hmac.tokenSecret": "my-hmac-token-secret",
+            "cse.appSecrets.secretKey": "my-cse-secret-key",
+            "cse.appSecrets.ssl.certificate": "my-base64-ssl-certificate",
+            "cse.appSecrets.ssl.privateKey": "my-base64-ssl-private-key",
+            "cse.appConfig.jwksAuthzIssuers": "eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg==",
+            "cse.appConfig.jwksAuthnIssuers": "eyAidmlydHJ1LXRlc3QiOiAiaHR0cDovL2p3dC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsL2p3ay5qc29uIiB9Cg==",
+            "cse.appConfig.jwtAud": "eyJhdXRobiI6InZpcnRydS10ZXN0IiwiYXV0aHoiOiJ2aXJ0cnUtdGVzdCJ9Cg==",
+            "cse.appConfig.jwtKaclsUrl": "http://cse.virtru.svc.cluster.local",
+            "cse.ingress.host": "cse.virtru.svc.cluster.local"
+          }
+          EOF
+          
+          echo "Deployment parameters:"
+          cat deploy_parameters.json
+
+      - name: "Create namespace if needed"
+        run: |
+          if ! kubectl get namespace ${{ github.event.inputs.namespace }} > /dev/null 2>&1; then
+            echo "Creating namespace ${{ github.event.inputs.namespace }}..."
+            kubectl create namespace ${{ github.event.inputs.namespace }}
+          else
+            echo "Namespace ${{ github.event.inputs.namespace }} already exists"
+          fi
+
+      - name: "Deploy with mpdev"
+        id: deploy
+        run: |
+          echo "Deploying Gateway to dev environment using mpdev..."
+          mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" --parameters="$(cat deploy_parameters.json)"
+          echo "✅ Gateway deployment to dev completed successfully"
+
+      - name: "Verify deployment"
+        run: |
+          echo "Checking deployment status..."
+          
+          # Check for Application existence
+          if kubectl get application gateway -n ${{ github.event.inputs.namespace }}; then
+            echo "✅ Application 'gateway' created successfully"
+          
+            # Check pod status
+            echo "Pod status:"
+            kubectl get pods -n ${{ github.event.inputs.namespace }} -l app.kubernetes.io/name=gateway
+          
+            # Check other resources
+            echo "Deployment status:"
+            kubectl get all -n ${{ github.event.inputs.namespace }} -l app.kubernetes.io/name=gateway
+          else
+            echo "❌ Application 'gateway' not found in namespace '${{ github.event.inputs.namespace }}'."
+            exit 1
+          fi

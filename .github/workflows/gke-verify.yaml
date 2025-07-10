@@ -1,0 +1,98 @@
+name: Verify Gateway Marketplace Deployment on dev
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'chart/**'
+      - 'schema.yaml'
+      - 'dev.Dockerfile'
+      - 'VERSION'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  verify-marketplace:
+    runs-on: virtru-scale-set-runner
+
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        with:
+          persist-credentials: false
+
+      - name: "Authenticate to Google Cloud"
+        id: "gcp-auth"
+        uses: google-github-actions/auth@62cf5bd3e4211a0a0b51f2c6d6a37129d828611d # v2.1.5
+        with:
+          workload_identity_provider: "projects/1053957112592/locations/global/workloadIdentityPools/github-actions-oidc-pool/providers/github-actions-oidc-provider"
+          service_account: "github-actions-sa@prj-infra-automation-ktbz.iam.gserviceaccount.com"
+          token_format: "access_token"
+
+      - name: "Setup gcloud CLI"
+        uses: google-github-actions/setup-gcloud@f0990588f1e5b5af6827153b93673613abdc6ec7
+        with:
+          install_components: 'kubectl'
+
+      - name: "Docker login to Artifact Registry"
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
+        with:
+          registry: us-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: "Connect to GKE Cluster"
+        uses: google-github-actions/get-gke-credentials@4d042ce21867b02551fee51e20bffc05689d8f94
+        with:
+          cluster_name: hg-dev-green
+
+      - name: "Install mpdev"
+        run: |
+          curl -L -o mpdev.tar.gz https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/releases/download/v0.11.8/mpdev_linux_amd64.tar.gz
+          tar -xzvf mpdev.tar.gz
+          chmod +x mpdev
+          sudo mv mpdev /usr/local/bin/
+
+      - name: "Update Helm dependencies"
+        run: |
+          cd chart/gateway
+          helm dependency update
+          cd -
+
+      - name: "Set version variables"
+        run: |
+          VERSION=$(cat VERSION)
+          echo "TAG=${VERSION}" >> $GITHUB_ENV
+          echo "DEPLOYER_VERSION=$(echo ${VERSION} | cut -d'.' -f 1-2)" >> $GITHUB_ENV
+          echo "REGISTRY=us-docker.pkg.dev/prj-hosted-gateway-dev-qvec/gateway/gateway" >> $GITHUB_ENV
+
+      - name: "Build deployer image"
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v4.6.0
+        with:
+          context: .
+          file: dev.Dockerfile
+          push: true
+          build-args: |
+            TAG=${{ env.TAG }}
+            REGISTRY=${{ env.REGISTRY }}
+          tags: ${{ env.REGISTRY }}/deployer:${{ env.DEPLOYER_VERSION }}
+          platforms: linux/amd64
+
+      - name: "Install Application CRD"
+        run: |
+          kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
+
+      - name: "Run marketplace verification"
+        run: |
+          export MPDEV_VERIFY_TIMEOUT=600 # 10 minutes
+
+          mpdev verify --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" --verbose
+
+      - name: "Cleanup verification resources"
+        if: always()
+        run: |
+          kubectl get ns -l app.kubernetes.io/name=apptest -o name | xargs -r kubectl delete --wait=false
