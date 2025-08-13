@@ -10,7 +10,8 @@ on:
       - 'schema.yaml'
       - 'dev.Dockerfile'
       - 'VERSION'
-
+  repository_dispatch:
+    types: [ verify-gateway ]
 permissions:
   contents: read
   id-token: write

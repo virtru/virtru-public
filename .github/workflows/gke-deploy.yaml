@@ -19,6 +19,8 @@ on:
         description: 'Number of licenses'
         required: true
         default: '10'
+  repository_dispatch:
+    types: [ deploy-gateway ]
 
 permissions:
   contents: read
@@ -27,11 +29,18 @@ permissions:
 jobs:
   deploy-gateway:
     runs-on: virtru-scale-set-runner
+    env:
+      BRANCH: ${{ github.event.client_payload.branch || github.ref_name }}
+      NAMESPACE: ${{ github.event.client_payload.namespace || github.event.inputs.namespace }}
+      GATEWAY_HOSTNAME: ${{ github.event.client_payload.gateway_hostname || github.event.inputs.gateway_hostname }}
+      PRIMARY_MAILING_DOMAIN: ${{ github.event.client_payload.primary_mailing_domain || github.event.inputs.primary_mailing_domain }}
+      NUMBER_OF_LICENSES: ${{ github.event.client_payload.number_of_licenses || github.event.inputs.number_of_licenses }}
 
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
+          ref: ${{ env.BRANCH }}
           persist-credentials: false
 
       - name: "Authenticate to Google Cloud"
@@ -121,15 +130,15 @@ jobs:
           cat > deploy_parameters.json << EOF
           {
             "name": "gateway",
-            "namespace": "${{ github.event.inputs.namespace }}",
-            "gatewayHostname": "${{ github.event.inputs.gateway_hostname }}",
+            "namespace": "${{ env.NAMESPACE }}",
+            "gatewayHostname": "${{ env.GATEWAY_HOSTNAME }}",
             "gatewayApiTokenName": "token",
             "gatewayApiSecret": "mysecret",
             "gatewayFlow": "Outbound - Data Loss Prevention",
-            "primaryMailingDomain": "${{ github.event.inputs.primary_mailing_domain }}",
+            "primaryMailingDomain": "${{ env.PRIMARY_MAILING_DOMAIN }}",
             "amplitudeToken": "fake-token",
             "pricingPlan": "gateway___gmail_encryption__per_user_per_day_",
-            "numberOfLicenses": "${{ github.event.inputs.number_of_licenses }}",
+            "numberOfLicenses": "${{ env.NUMBER_OF_LICENSES }}",
             "reportingSecret": "gs://cloud-marketplace-tools/reporting_secrets/fake_reporting_secret.yaml",
             "cse.appSecrets.hmac.tokenId": "my-hmac-token-id",
             "cse.appSecrets.hmac.tokenSecret": "my-hmac-token-secret",
@@ -168,17 +177,15 @@ jobs:
           echo "Checking deployment status..."
           
           # Check for Application existence
-          if kubectl get application gateway -n ${{ github.event.inputs.namespace }}; then
+          if kubectl get application gateway -n ${{ env.NAMESPACE }}; then
             echo "✅ Application 'gateway' created successfully"
-          
-            # Check pod status
+    
             echo "Pod status:"
-            kubectl get pods -n ${{ github.event.inputs.namespace }} -l app.kubernetes.io/name=gateway
-          
-            # Check other resources
+            kubectl get pods -n ${{ env.NAMESPACE }} -l app.kubernetes.io/name=gateway
+
             echo "Deployment status:"
-            kubectl get all -n ${{ github.event.inputs.namespace }} -l app.kubernetes.io/name=gateway
+            kubectl get all -n ${{ env.NAMESPACE }} -l app.kubernetes.io/name=gateway
           else
-            echo "❌ Application 'gateway' not found in namespace '${{ github.event.inputs.namespace }}'."
+            echo "❌ Application 'gateway' not found in namespace '${{ env.NAMESPACE }}'."
             exit 1
           fi
