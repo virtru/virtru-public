@@ -21,6 +21,33 @@ on:
         default: '10'
   repository_dispatch:
     types: [ deploy-gateway ]
+  workflow_call:
+    inputs:
+      namespace:
+        description: 'Namespace for deployment'
+        type: string
+        default: 'virtru'
+        required: false
+      gateway_hostname:
+        description: 'Gateway hostname'
+        type: string
+        default: 'gateway-development.virtru.com'
+        required: false
+      primary_mailing_domain:
+        description: 'Primary mailing domain'
+        type: string
+        default: 'virtru.example.com'
+        required: false
+      number_of_licenses:
+        description: 'Number of licenses'
+        type: string
+        default: '10'
+        required: false
+      branch:
+        description: 'Branch to checkout'
+        type: string
+        default: ''
+        required: false
 
 permissions:
   contents: read
@@ -30,11 +57,12 @@ jobs:
   deploy-gateway:
     runs-on: virtru-scale-set-runner
     env:
-      BRANCH: ${{ github.event.client_payload.branch || github.ref_name }}
-      NAMESPACE: ${{ github.event.client_payload.namespace || github.event.inputs.namespace }}
-      GATEWAY_HOSTNAME: ${{ github.event.client_payload.gateway_hostname || github.event.inputs.gateway_hostname }}
-      PRIMARY_MAILING_DOMAIN: ${{ github.event.client_payload.primary_mailing_domain || github.event.inputs.primary_mailing_domain }}
-      NUMBER_OF_LICENSES: ${{ github.event.client_payload.number_of_licenses || github.event.inputs.number_of_licenses }}
+      BRANCH: ${{ inputs.branch || github.event.client_payload.branch || github.ref_name }}
+      NAMESPACE: ${{ inputs.namespace || github.event.client_payload.namespace || github.event.inputs.namespace }}
+      GATEWAY_HOSTNAME: ${{ inputs.gateway_hostname || github.event.client_payload.gateway_hostname || github.event.inputs.gateway_hostname }}
+      PRIMARY_MAILING_DOMAIN: ${{ inputs.primary_mailing_domain || github.event.client_payload.primary_mailing_domain || github.event.inputs.primary_mailing_domain }}
+      NUMBER_OF_LICENSES: ${{ inputs.number_of_licenses || github.event.client_payload.number_of_licenses || github.event.inputs.number_of_licenses }}
+
 
     steps:
       - name: "Checkout repository"
