@@ -66,14 +66,14 @@ jobs:
 
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@v4
         with:
           ref: ${{ env.BRANCH }}
           persist-credentials: false
 
       - name: "Authenticate to Google Cloud"
         id: "gcp-auth"
-        uses: google-github-actions/auth@55bd3a7c6e2ae7cf1877fd1ccb9d54c0503c457c # v2.1.5
+        uses: google-github-actions/auth@v2 # v2.1.5
         with:
           workload_identity_provider: 'projects/1053957112592/locations/global/workloadIdentityPools/github-actions-oidc-pool/providers/github-actions-oidc-provider'
           service_account: 'github-actions-sa@prj-infra-automation-ktbz.iam.gserviceaccount.com'
@@ -81,13 +81,13 @@ jobs:
 
       - name: 'Set up Cloud SDK'
         id: setup-gcloud
-        uses: google-github-actions/setup-gcloud@f0990588f1e5b5af6827153b93673613abdc6ec7 # v2.1.1
+        uses: google-github-actions/setup-gcloud@v2 # v2.1.1
         with:
           version: '>= 363.0.0'
           install_components: 'kubectl'
 
       - name: "Setup Helm"
-        uses: azure/setup-helm@1e6d3aaf479f04f23407416f5f3a9f6701254b98 # v3.11.1
+        uses: azure/setup-helm@v3
         with:
           version: 'v3.11.1'
 
@@ -100,14 +100,14 @@ jobs:
           mpdev version
 
       - name: "Docker login to Artifact Registry"
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
+        uses: docker/login-action@v3
         with:
           registry: us-docker.pkg.dev
           username: oauth2accesstoken
           password: ${{ steps.gcp-auth.outputs.access_token }}
 
       - name: "Connect to Dev GKE Cluster"
-        uses: google-github-actions/get-gke-credentials@4d042ce21867b02551fee51e20bffc05689d8f94
+        uses: google-github-actions/get-gke-credentials@v2
         with:
           cluster_name: hg-dev-green
 
@@ -131,7 +131,7 @@ jobs:
           kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
 
       - name: "Build deployer image"
-        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: dev.Dockerfile
