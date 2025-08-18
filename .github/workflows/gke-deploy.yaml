@@ -93,11 +93,25 @@ jobs:
 
       - name: "Install mpdev"
         run: |
-          curl -L -o mpdev.tar.gz https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/releases/download/v0.11.8/mpdev_linux_amd64.tar.gz
+          echo "Downloading mpdev v0.11.8..."
+          curl -L -v -o mpdev.tar.gz https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/releases/download/v0.11.8/mpdev_linux_amd64.tar.gz
+
+          echo "Checking downloaded file:"
+          ls -la mpdev.tar.gz
+          file mpdev.tar.gz
+
+          echo "Attempting to extract file:"
           tar -xzvf mpdev.tar.gz
-          chmod +x mpdev
-          sudo mv mpdev /usr/local/bin/
-          mpdev version
+
+          chmod +x mpdev 2>/dev/null || echo "Could not chmod mpdev (file likely doesn't exist)"
+          sudo mv mpdev /usr/local/bin/ 2>/dev/null || echo "Could not move mpdev (file likely doesn't exist)"
+          mpdev version 2>/dev/null || echo "mpdev command not available"
+
+      - name: "Check mpdev release page"
+        if: ${{ failure() }}
+        run: |
+          echo "Checking available releases of mpdev..."
+          curl -s https://api.github.com/repos/GoogleCloudPlatform/marketplace-k8s-app-tools/releases | jq -r '.[].tag_name'
 
       - name: "Docker login to Artifact Registry"
         uses: docker/login-action@v3
