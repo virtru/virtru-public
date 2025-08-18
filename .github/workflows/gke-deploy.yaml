@@ -94,6 +94,9 @@ jobs:
       - name: "Install mpdev from Docker"
         run: |
           echo "Installing mpdev from Docker image..."
+
+          gcloud auth configure-docker gcr.io
+
           docker pull gcr.io/cloud-marketplace-tools/k8s/dev:latest
           docker create --name mpdev-tmp gcr.io/cloud-marketplace-tools/k8s/dev:latest
           docker cp mpdev-tmp:/scripts/dev/mpdev .
@@ -103,7 +106,7 @@ jobs:
           sudo mv mpdev /usr/local/bin/
 
           echo "Installed mpdev version:"
-          mpdev version || echo "Failed to execute mpdev"
+          mpdev version
 
       - name: "Check mpdev release page"
         if: ${{ failure() }}
