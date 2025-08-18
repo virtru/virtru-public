@@ -91,21 +91,19 @@ jobs:
         with:
           version: 'v3.11.1'
 
-      - name: "Install mpdev"
+      - name: "Install mpdev from Docker"
         run: |
-          echo "Downloading mpdev v0.11.8..."
-          curl -L -v -o mpdev.tar.gz https://github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/releases/download/v0.11.8/mpdev_linux_amd64.tar.gz
+          echo "Installing mpdev from Docker image..."
+          docker pull gcr.io/cloud-marketplace-tools/k8s/dev:latest
+          docker create --name mpdev-tmp gcr.io/cloud-marketplace-tools/k8s/dev:latest
+          docker cp mpdev-tmp:/scripts/dev/mpdev .
+          docker rm mpdev-tmp
 
-          echo "Checking downloaded file:"
-          ls -la mpdev.tar.gz
-          file mpdev.tar.gz
+          chmod +x mpdev
+          sudo mv mpdev /usr/local/bin/
 
-          echo "Attempting to extract file:"
-          tar -xzvf mpdev.tar.gz
-
-          chmod +x mpdev 2>/dev/null || echo "Could not chmod mpdev (file likely doesn't exist)"
-          sudo mv mpdev /usr/local/bin/ 2>/dev/null || echo "Could not move mpdev (file likely doesn't exist)"
-          mpdev version 2>/dev/null || echo "mpdev command not available"
+          echo "Installed mpdev version:"
+          mpdev version || echo "Failed to execute mpdev"
 
       - name: "Check mpdev release page"
         if: ${{ failure() }}
