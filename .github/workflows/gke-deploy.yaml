@@ -91,21 +91,31 @@ jobs:
         with:
           version: 'v3.11.1'
 
-      - name: "Install mpdev from Docker"
+      - name: "Install mpdev"
         run: |
-          echo "Installing mpdev from Docker image..."
+          echo "Installing mpdev..."
 
-          gcloud auth configure-docker gcr.io
+          kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
+          gcloud auth configure-docker --quiet
 
-          docker pull gcr.io/cloud-marketplace-tools/k8s/dev:latest
-          docker create --name mpdev-tmp gcr.io/cloud-marketplace-tools/k8s/dev:latest
-          docker cp mpdev-tmp:/scripts/dev/mpdev .
-          docker rm mpdev-tmp
+          echo "Pulling cloud-marketplace-tools Docker image..."
+          docker pull gcr.io/cloud-marketplace-tools/k8s/dev
 
-          chmod +x mpdev
-          sudo mv mpdev /usr/local/bin/
+          mkdir -p $HOME/bin
 
-          echo "Installed mpdev version:"
+          BIN_FILE="$HOME/bin/mpdev"
+          echo "Extracting mpdev script to $BIN_FILE"
+          docker run \
+            gcr.io/cloud-marketplace-tools/k8s/dev \
+            cat /scripts/dev > "$BIN_FILE"
+          chmod +x "$BIN_FILE"
+
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+          echo "Testing mpdev installation:"
+          $BIN_FILE --help
+
+          sudo cp "$BIN_FILE" /usr/local/bin/
           mpdev version
 
       - name: "Check mpdev release page"
