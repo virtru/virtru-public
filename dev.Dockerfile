@@ -30,20 +30,20 @@ FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.8
 
 RUN echo "=== APPLYING MARKETPLACE TOOLS PATCH ===" \
     && cp /bin/provision.py /bin/provision.py.backup \
-    && python3 -c "
+    && cat > /tmp/patch.py << 'SCRIPT'
 import re
 
 with open('/bin/provision.py', 'r') as f:
     content = f.read()
 
-new_function = '''def deployer_image_to_repo_prefix(deployer_image):
+new_function = """def deployer_image_to_repo_prefix(deployer_image):
   \"\"\"Extract repo prefix from deployer image name.\"\"\"
-  image_without_tag = deployer_image.split(\"@\")[0].rsplit(\":\", 1)[0]
-  if image_without_tag.endswith(\"/deployer\"):
-    return image_without_tag[:-len(\"/deployer\")]
+  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]
+  if image_without_tag.endswith("/deployer"):
+    return image_without_tag[:-len("/deployer")]
   else:
     return image_without_tag
-'''
+"""
 
 start = content.find('def deployer_image_to_repo_prefix')
 if start != -1:
@@ -57,10 +57,13 @@ if start != -1:
 
 with open('/bin/provision.py', 'w') as f:
     f.write(content)
-" \
+SCRIPT
+
+RUN python3 /tmp/patch.py \
+    && rm /tmp/patch.py \
     && echo "=== PATCH APPLIED ===" \
     && echo "Function after patch:" \
-    && sed -n '/def deployer_image_to_repo_prefix/,/^$/p' /bin/provision.py
+    && sed -n '/def deployer_image_to_repo_prefix/,/^def /p' /bin/provision.py | head -10
 
 COPY --from=build /tmp/gateway.tar.gz /data/chart/
 COPY --from=build /tmp/schema.yaml /data/
