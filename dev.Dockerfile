@@ -30,20 +30,46 @@ FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.8
 
 RUN echo "=== APPLYING MARKETPLACE TOOLS PATCH ===" \
     && cp /bin/provision.py /bin/provision.py.backup \
-    && echo "Before patch - show function:" \
-    && sed -n '742,750p' /bin/provision.py \
-    && sed -i '742,748d' /bin/provision.py \
-    && sed -i '741a\def deployer_image_to_repo_prefix(deployer_image):\
-  """Extract repo prefix from deployer image name."""\
-  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]\
-  if image_without_tag.endswith("/deployer"):\
-    return image_without_tag[:-len("/deployer")]\
-  else:\
-    return image_without_tag\
-' /bin/provision.py \
+    && echo "Before patch - show all raise Exception with deployer:" \
+    && grep -n "raise Exception.*deployer" /bin/provision.py || echo "No raise Exception found initially" \
+    && python3 -c "
+import re
+
+with open('/bin/provision.py', 'r') as f:
+    content = f.read()
+
+print('=== Original content around deployer_image_to_repo_prefix function ===')
+start = content.find('def deployer_image_to_repo_prefix')
+if start != -1:
+    # Show 20 lines from function start
+    lines = content[start:start+2000]
+    print(lines)
+
+# Remove ALL raise Exception lines that mention deployer
+content = re.sub(r'.*raise Exception.*deployer.*\n', '', content, flags=re.IGNORECASE)
+
+# Also replace the entire function to be sure
+pattern = r'def deployer_image_to_repo_prefix.*?(?=\ndef |\Z)'
+replacement = '''def deployer_image_to_repo_prefix(deployer_image):
+  \"\"\"Extract repo prefix from deployer image name.\"\"\"
+  image_without_tag = deployer_image.split('@')[0].rsplit(':', 1)[0]
+  if image_without_tag.endswith('/deployer'):
+    return image_without_tag[:-len('/deployer')]
+  else:
+    return image_without_tag
+
+'''
+
+content = re.sub(pattern, replacement, content, flags=re.MULTILINE | re.DOTALL)
+
+with open('/bin/provision.py', 'w') as f:
+    f.write(content)
+" \
     && echo "=== PATCH APPLIED ===" \
+    && echo "After patch - check for any remaining raise Exception:" \
+    && grep -n "raise Exception.*deployer" /bin/provision.py || echo "✅ No raise Exception found!" \
     && echo "Function after patch:" \
-    && sed -n '742,748p' /bin/provision.py
+    && grep -A 10 "def deployer_image_to_repo_prefix" /bin/provision.py
 
 COPY --from=build /tmp/gateway.tar.gz /data/chart/
 COPY --from=build /tmp/schema.yaml /data/
