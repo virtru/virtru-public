@@ -30,8 +30,17 @@ FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.8
 
 RUN echo "=== APPLYING MARKETPLACE TOOLS PATCH ===" \
     && cp /bin/provision.py /bin/provision.py.backup \
-    && sed -i '744s/.*/  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]/' /bin/provision.py \
-    && sed -i '745,746c\  return image_without_tag[:-len("/deployer")] if image_without_tag.endswith("/deployer") else image_without_tag' /bin/provision.py \
+    && echo "Before patch - show function:" \
+    && sed -n '742,750p' /bin/provision.py \
+    && sed -i '742,748d' /bin/provision.py \
+    && sed -i '741a\def deployer_image_to_repo_prefix(deployer_image):\
+  """Extract repo prefix from deployer image name."""\
+  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]\
+  if image_without_tag.endswith("/deployer"):\
+    return image_without_tag[:-len("/deployer")]\
+  else:\
+    return image_without_tag\
+' /bin/provision.py \
     && echo "=== PATCH APPLIED ===" \
     && echo "Function after patch:" \
     && sed -n '742,748p' /bin/provision.py
