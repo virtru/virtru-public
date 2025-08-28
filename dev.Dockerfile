@@ -30,40 +30,11 @@ FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.8
 
 RUN echo "=== APPLYING MARKETPLACE TOOLS PATCH ===" \
     && cp /bin/provision.py /bin/provision.py.backup \
-    && cat > /tmp/patch.py << 'SCRIPT'
-import re
-
-with open('/bin/provision.py', 'r') as f:
-    content = f.read()
-
-new_function = """def deployer_image_to_repo_prefix(deployer_image):
-  \"\"\"Extract repo prefix from deployer image name.\"\"\"
-  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]
-  if image_without_tag.endswith("/deployer"):
-    return image_without_tag[:-len("/deployer")]
-  else:
-    return image_without_tag
-"""
-
-start = content.find('def deployer_image_to_repo_prefix')
-if start != -1:
-    rest = content[start:]
-    next_def = rest.find('\ndef ', 1)
-    if next_def != -1:
-        end = start + next_def
-        content = content[:start] + new_function + '\n' + content[end:]
-    else:
-        content = content[:start] + new_function
-
-with open('/bin/provision.py', 'w') as f:
-    f.write(content)
-SCRIPT
-
-RUN python3 /tmp/patch.py \
-    && rm /tmp/patch.py \
+    && sed -i '744s/.*/  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]/' /bin/provision.py \
+    && sed -i '745,746c\  return image_without_tag[:-len("/deployer")] if image_without_tag.endswith("/deployer") else image_without_tag' /bin/provision.py \
     && echo "=== PATCH APPLIED ===" \
     && echo "Function after patch:" \
-    && sed -n '/def deployer_image_to_repo_prefix/,/^def /p' /bin/provision.py | head -10
+    && sed -n '742,748p' /bin/provision.py
 
 COPY --from=build /tmp/gateway.tar.gz /data/chart/
 COPY --from=build /tmp/schema.yaml /data/
