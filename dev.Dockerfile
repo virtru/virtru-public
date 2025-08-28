@@ -30,44 +30,25 @@ FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.8
 
 RUN echo "=== APPLYING MARKETPLACE TOOLS PATCH ===" \
     && cp /bin/provision.py /bin/provision.py.backup \
-    && echo "Before patch - show all raise Exception with deployer:" \
-    && grep -n "raise Exception.*deployer" /bin/provision.py || echo "No raise Exception found initially" \
-    && python3 -c "
-import re
-
-with open('/bin/provision.py', 'r') as f:
-    content = f.read()
-
-print('=== Original content around deployer_image_to_repo_prefix function ===')
-start = content.find('def deployer_image_to_repo_prefix')
-if start != -1:
-    # Show 20 lines from function start
-    lines = content[start:start+2000]
-    print(lines)
-
-# Remove ALL raise Exception lines that mention deployer
-content = re.sub(r'.*raise Exception.*deployer.*\n', '', content, flags=re.IGNORECASE)
-
-# Also replace the entire function to be sure
-pattern = r'def deployer_image_to_repo_prefix.*?(?=\ndef |\Z)'
-replacement = '''def deployer_image_to_repo_prefix(deployer_image):
-  \"\"\"Extract repo prefix from deployer image name.\"\"\"
-  image_without_tag = deployer_image.split('@')[0].rsplit(':', 1)[0]
-  if image_without_tag.endswith('/deployer'):
-    return image_without_tag[:-len('/deployer')]
-  else:
-    return image_without_tag
-
-'''
-
-content = re.sub(pattern, replacement, content, flags=re.MULTILINE | re.DOTALL)
-
-with open('/bin/provision.py', 'w') as f:
-    f.write(content)
-" \
+    && echo "Before patch:" \
+    && grep -n "raise Exception" /bin/provision.py | head -5 \
+    && sed -i '/raise Exception.*[Dd]eployer/d' /bin/provision.py \
+    && sed -i '/raise Exception.*suffix/d' /bin/provision.py \
+    && sed -i '/Deployer image must have/d' /bin/provision.py \
+    && echo "Lines 740-750 before function replacement:" \
+    && sed -n '740,750p' /bin/provision.py \
+    && sed -i '742,748d' /bin/provision.py \
+    && sed -i '741a\def deployer_image_to_repo_prefix(deployer_image):\
+  """Extract repo prefix from deployer image name."""\
+  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]\
+  if image_without_tag.endswith("/deployer"):\
+    return image_without_tag[:-len("/deployer")]\
+  else:\
+    return image_without_tag\
+' /bin/provision.py \
     && echo "=== PATCH APPLIED ===" \
-    && echo "After patch - check for any remaining raise Exception:" \
-    && grep -n "raise Exception.*deployer" /bin/provision.py || echo "✅ No raise Exception found!" \
+    && echo "Final verification - no raise Exception should remain:" \
+    && grep -n "raise Exception.*deployer" /bin/provision.py || echo "✅ Success!" \
     && echo "Function after patch:" \
     && grep -A 10 "def deployer_image_to_repo_prefix" /bin/provision.py
 
