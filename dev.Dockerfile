@@ -38,14 +38,18 @@ RUN echo "=== APPLYING MARKETPLACE TOOLS PATCH ===" \
     && echo "Lines 740-750 before function replacement:" \
     && sed -n '740,750p' /bin/provision.py \
     && sed -i '742,748d' /bin/provision.py \
-    && sed -i '741a\def deployer_image_to_repo_prefix(deployer_image):\
-  """Extract repo prefix from deployer image name."""\
-  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]\
-  if image_without_tag.endswith("/deployer"):\
-    return image_without_tag[:-len("/deployer")]\
-  else:\
-    return image_without_tag\
-' /bin/provision.py \
+    && cat > /tmp/new_function.py << 'EOF'
+def deployer_image_to_repo_prefix(deployer_image):
+  """Extract repo prefix from deployer image name."""
+  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]
+  if image_without_tag.endswith("/deployer"):
+    return image_without_tag[:-len("/deployer")]
+  else:
+    return image_without_tag
+EOF
+
+RUN sed -i '741r /tmp/new_function.py' /bin/provision.py \
+    && rm /tmp/new_function.py \
     && echo "=== PATCH APPLIED ===" \
     && echo "Final verification - no raise Exception should remain:" \
     && grep -n "raise Exception.*deployer" /bin/provision.py || echo "✅ Success!" \
