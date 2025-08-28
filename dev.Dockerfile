@@ -1,12 +1,20 @@
 FROM marketplace.gcr.io/google/debian11:latest as build
+
+ARG REGISTRY
+ARG TAG
+
 RUN apt-get update && apt-get install -y --no-install-recommends gettext
 
 ADD chart/gateway /tmp/chart
 RUN cd /tmp && tar -czvf /tmp/gateway.tar.gz chart
 
 ADD schema.yaml /tmp/schema.yaml
-RUN cat /tmp/schema.yaml \
-    | env -i "REGISTRY=${REGISTRY}" "TAG=${TAG}" envsubst \
+
+RUN echo "=== Variables before envsubst ===" \
+    && echo "REGISTRY=${REGISTRY}" \
+    && echo "TAG=${TAG}" \
+    && cat /tmp/schema.yaml \
+    | REGISTRY="${REGISTRY}" TAG="${TAG}" envsubst \
     > /tmp/schema.yaml.new \
     && mv /tmp/schema.yaml.new /tmp/schema.yaml
 
@@ -37,4 +45,5 @@ RUN mkdir -p /data/values
 RUN echo "=== Final /data structure ===" \
     && ls -la /data/ \
     && echo "=== Final schema.yaml publishedVersion ===" \
-    && grep "publishedVersion" /data/schema.yaml || echo "No publishedVersion found" \
+    && grep "publishedVersion" /data/schema.yaml || echo "No publishedVersion found"
+
