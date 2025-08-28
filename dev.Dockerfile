@@ -28,13 +28,20 @@ RUN mkdir -p /tmp/chart/data-test \
 
 FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.8
 
-# patch to fix image tag parsing issue in marketplace tools
 RUN echo "=== APPLYING MARKETPLACE TOOLS PATCH ===" \
     && cp /bin/provision.py /bin/provision.py.backup \
-    && sed -i '744s/.*/  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]/' /bin/provision.py \
+    && sed -i '/def deployer_image_to_repo_prefix/,/^$/c\
+def deployer_image_to_repo_prefix(deployer_image):\
+  """Extract repo prefix from deployer image name."""\
+  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]\
+  if image_without_tag.endswith("/deployer"):\
+    return image_without_tag[:-len("/deployer")]\
+  else:\
+    return image_without_tag\
+' /bin/provision.py \
     && echo "=== PATCH APPLIED ===" \
-    && echo "Original line 744:" && sed -n '744p' /bin/provision.py.backup \
-    && echo "Patched line 744:" && sed -n '744p' /bin/provision.py
+    && echo "Function after patch:" \
+    && sed -n '/def deployer_image_to_repo_prefix/,/^$/p' /bin/provision.py
 
 COPY --from=build /tmp/gateway.tar.gz /data/chart/
 COPY --from=build /tmp/schema.yaml /data/
@@ -46,4 +53,3 @@ RUN echo "=== Final /data structure ===" \
     && ls -la /data/ \
     && echo "=== Final schema.yaml publishedVersion ===" \
     && grep "publishedVersion" /data/schema.yaml || echo "No publishedVersion found"
-
