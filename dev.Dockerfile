@@ -30,15 +30,34 @@ FROM gcr.io/cloud-marketplace-tools/k8s/deployer_helm:0.11.8
 
 RUN echo "=== APPLYING MARKETPLACE TOOLS PATCH ===" \
     && cp /bin/provision.py /bin/provision.py.backup \
-    && sed -i '/def deployer_image_to_repo_prefix/,/^$/c\
-def deployer_image_to_repo_prefix(deployer_image):\
-  """Extract repo prefix from deployer image name."""\
-  image_without_tag = deployer_image.split("@")[0].rsplit(":", 1)[0]\
-  if image_without_tag.endswith("/deployer"):\
-    return image_without_tag[:-len("/deployer")]\
-  else:\
-    return image_without_tag\
-' /bin/provision.py \
+    && python3 -c "
+import re
+
+with open('/bin/provision.py', 'r') as f:
+    content = f.read()
+
+new_function = '''def deployer_image_to_repo_prefix(deployer_image):
+  \"\"\"Extract repo prefix from deployer image name.\"\"\"
+  image_without_tag = deployer_image.split(\"@\")[0].rsplit(\":\", 1)[0]
+  if image_without_tag.endswith(\"/deployer\"):
+    return image_without_tag[:-len(\"/deployer\")]
+  else:
+    return image_without_tag
+'''
+
+start = content.find('def deployer_image_to_repo_prefix')
+if start != -1:
+    rest = content[start:]
+    next_def = rest.find('\ndef ', 1)
+    if next_def != -1:
+        end = start + next_def
+        content = content[:start] + new_function + '\n' + content[end:]
+    else:
+        content = content[:start] + new_function
+
+with open('/bin/provision.py', 'w') as f:
+    f.write(content)
+" \
     && echo "=== PATCH APPLIED ===" \
     && echo "Function after patch:" \
     && sed -n '/def deployer_image_to_repo_prefix/,/^$/p' /bin/provision.py
