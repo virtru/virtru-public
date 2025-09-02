@@ -1,4 +1,4 @@
-name: 🚀 Deploy Gateway to Dev GKE
+name: 🚀 Gateway Deployment & Verification
 
 on:
   workflow_dispatch:
@@ -19,61 +19,38 @@ on:
         description: 'Number of licenses'
         required: true
         default: '10'
-  repository_dispatch:
-    types: [ deploy-gateway ]
-  workflow_call:
-    inputs:
-      namespace:
-        description: 'Namespace for deployment'
-        type: string
-        default: 'virtru'
+      run_verify_only:
+        description: 'Run only verification (skip deployment)'
+        type: boolean
         required: false
-      gateway_hostname:
-        description: 'Gateway hostname'
-        type: string
-        default: 'gateway-development.virtru.com'
-        required: false
-      primary_mailing_domain:
-        description: 'Primary mailing domain'
-        type: string
-        default: 'virtru.example.com'
-        required: false
-      number_of_licenses:
-        description: 'Number of licenses'
-        type: string
-        default: '10'
-        required: false
-      branch:
-        description: 'Branch to checkout'
-        type: string
-        default: ''
-        required: false
+        default: false
+  push:
+    branches:
+      - main
+    paths:
+      - 'chart/**'
+      - 'schema.yaml'
+      - 'dev.Dockerfile'
+      - 'VERSION'
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  deploy-gateway:
-    runs-on: virtru-scale-set-runner
-    env:
-      BRANCH: ${{ inputs.branch || github.event.client_payload.branch || github.ref_name }}
-      NAMESPACE: ${{ inputs.namespace || github.event.client_payload.namespace || github.event.inputs.namespace }}
-      GATEWAY_HOSTNAME: ${{ inputs.gateway_hostname || github.event.client_payload.gateway_hostname || github.event.inputs.gateway_hostname }}
-      PRIMARY_MAILING_DOMAIN: ${{ inputs.primary_mailing_domain || github.event.client_payload.primary_mailing_domain || github.event.inputs.primary_mailing_domain }}
-      NUMBER_OF_LICENSES: ${{ inputs.number_of_licenses || github.event.client_payload.number_of_licenses || github.event.inputs.number_of_licenses }}
-
-
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.set-version.outputs.tag }}
+      deployer_version: ${{ steps.set-version.outputs.deployer_version }}
+      registry: ${{ steps.set-version.outputs.registry }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BRANCH }}
-          persist-credentials: false
 
       - name: "Authenticate to Google Cloud"
         id: "gcp-auth"
-        uses: google-github-actions/auth@v2 # v2.1.5
+        uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: 'projects/1053957112592/locations/global/workloadIdentityPools/github-actions-oidc-pool/providers/github-actions-oidc-provider'
           service_account: 'github-actions-sa@prj-infra-automation-ktbz.iam.gserviceaccount.com'
@@ -81,7 +58,7 @@ jobs:
 
       - name: 'Set up Cloud SDK'
         id: setup-gcloud
-        uses: google-github-actions/setup-gcloud@v2 # v2.1.1
+        uses: google-github-actions/setup-gcloud@v2
         with:
           version: '>= 363.0.0'
           install_components: 'kubectl'
@@ -91,38 +68,49 @@ jobs:
         with:
           version: 'v3.11.1'
 
-      - name: "Install mpdev"
+      - name: "Connect to Dev GKE Cluster"
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: hg-dev-green
+
+      - name: "Set version variables"
+        id: set-version
         run: |
-          echo "Installing mpdev..."
+          VERSION=$(cat VERSION)
+          echo "tag=${VERSION}" >> $GITHUB_OUTPUT
+          echo "deployer_version=$(echo ${VERSION} | cut -d'.' -f 1-2)" >> $GITHUB_OUTPUT
+          echo "registry=us-docker.pkg.dev/prj-hosted-gateway-dev-qvec/gateway/gateway" >> $GITHUB_OUTPUT
+          echo "Using version: ${VERSION}"
 
-          kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
-          gcloud auth configure-docker --quiet
+  deploy:
+    needs: setup
+    if: ${{ !inputs.run_verify_only }}
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.setup.outputs.tag }}
+      DEPLOYER_VERSION: ${{ needs.setup.outputs.deployer_version }}
+      REGISTRY: ${{ needs.setup.outputs.registry }}
+      NAMESPACE: ${{ github.event.inputs.namespace }}
+      GATEWAY_HOSTNAME: ${{ github.event.inputs.gateway_hostname }}
+      PRIMARY_MAILING_DOMAIN: ${{ github.event.inputs.primary_mailing_domain }}
+      NUMBER_OF_LICENSES: ${{ github.event.inputs.number_of_licenses }}
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
 
-          echo "Pulling cloud-marketplace-tools Docker image..."
-          docker pull gcr.io/cloud-marketplace-tools/k8s/dev
+      - name: "Authenticate to Google Cloud"
+        id: "gcp-auth"
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/1053957112592/locations/global/workloadIdentityPools/github-actions-oidc-pool/providers/github-actions-oidc-provider'
+          service_account: 'github-actions-sa@prj-infra-automation-ktbz.iam.gserviceaccount.com'
+          token_format: 'access_token'
 
-          mkdir -p $HOME/bin
-
-          BIN_FILE="$HOME/bin/mpdev"
-          echo "Extracting mpdev script to $BIN_FILE"
-          docker run \
-            gcr.io/cloud-marketplace-tools/k8s/dev \
-            cat /scripts/dev > "$BIN_FILE"
-          chmod +x "$BIN_FILE"
-
-          echo "$HOME/bin" >> $GITHUB_PATH
-
-          echo "Testing mpdev installation:"
-          $BIN_FILE --help
-
-          sudo cp "$BIN_FILE" /usr/local/bin/
-          mpdev version
-
-      - name: "Check mpdev release page"
-        if: ${{ failure() }}
-        run: |
-          echo "Checking available releases of mpdev..."
-          curl -s https://api.github.com/repos/GoogleCloudPlatform/marketplace-k8s-app-tools/releases | jq -r '.[].tag_name'
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>= 363.0.0'
+          install_components: 'kubectl'
 
       - name: "Docker login to Artifact Registry"
         uses: docker/login-action@v3
@@ -140,20 +128,15 @@ jobs:
         run: |
           cd chart/gateway
           helm dependency update
-          cd -
 
-      - name: "Set version and registry variables"
+      - name: "Check if Application CRD exists"
         run: |
-          VERSION=$(cat VERSION)
-          echo "TAG=${VERSION}" >> $GITHUB_ENV
-          echo "DEPLOYER_VERSION=$(echo ${VERSION} | cut -d'.' -f 1-2)" >> $GITHUB_ENV
-          echo "REGISTRY=us-docker.pkg.dev/prj-hosted-gateway-dev-qvec/gateway/gateway" >> $GITHUB_ENV
-          
-          echo "::notice::Deploying to DEVELOPMENT environment"
-
-      - name: "Install Application CRD"
-        run: |
-          kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml"
+          if kubectl get crd applications.app.k8s.io &>/dev/null; then
+            echo "✅ Application CRD already exists"
+          else
+            echo "⚠️ Attempting to install Application CRD..."
+            kubectl apply -f "https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/crd/app-crd.yaml" || echo "⚠️ Could not install CRD, proceeding anyway"
+          fi
 
       - name: "Build deployer image"
         uses: docker/build-push-action@v5
@@ -166,17 +149,6 @@ jobs:
             REGISTRY=${{ env.REGISTRY }}
           tags: ${{ env.REGISTRY }}/deployer:${{ env.DEPLOYER_VERSION }}
           platforms: linux/amd64
-
-      - name: "Verify deployer image in registry"
-        run: |
-          echo "Verifying image presence in registry..."
-          sleep 5 # Small delay to ensure image visibility
-          
-          if gcloud artifacts docker images describe "${{ env.REGISTRY }}/deployer:${{ env.DEPLOYER_VERSION }}"; then
-            echo "✅ Image successfully published and available in Artifact Registry"
-          else
-            echo "⚠️ Image not found in Artifact Registry after pushing."
-          fi
 
       - name: "Create deployment parameters"
         run: |
@@ -205,40 +177,99 @@ jobs:
             "cse.ingress.host": "cse.virtru.svc.cluster.local"
           }
           EOF
-          
-          echo "Deployment parameters:"
-          cat deploy_parameters.json
 
       - name: "Create namespace if needed"
         run: |
-          if ! kubectl get namespace ${{ github.event.inputs.namespace }} > /dev/null 2>&1; then
-            echo "Creating namespace ${{ github.event.inputs.namespace }}..."
-            kubectl create namespace ${{ github.event.inputs.namespace }}
+          if ! kubectl get namespace ${{ env.NAMESPACE }} > /dev/null 2>&1; then
+            kubectl create namespace ${{ env.NAMESPACE }}
           else
-            echo "Namespace ${{ github.event.inputs.namespace }} already exists"
+            echo "Namespace ${{ env.NAMESPACE }} already exists"
           fi
 
-      - name: "Deploy with mpdev"
-        id: deploy
+      - name: "Deploy using Docker directly"
         run: |
-          echo "Deploying Gateway to dev environment using mpdev..."
-          mpdev install --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" --parameters="$(cat deploy_parameters.json)"
-          echo "✅ Gateway deployment to dev completed successfully"
+          gcloud auth configure-docker --quiet
+          
+          docker create --name mpdev-tmp gcr.io/cloud-marketplace-tools/k8s/dev
+          docker cp mpdev-tmp:/scripts $HOME/marketplace-scripts
+          docker rm mpdev-tmp
+          
+          chmod -R +x $HOME/marketplace-scripts
+          
+          $HOME/marketplace-scripts/install \
+            --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
+            --parameters="$(cat deploy_parameters.json)"
 
       - name: "Verify deployment"
         run: |
-          echo "Checking deployment status..."
-          
-          # Check for Application existence
           if kubectl get application gateway -n ${{ env.NAMESPACE }}; then
             echo "✅ Application 'gateway' created successfully"
-    
-            echo "Pod status:"
             kubectl get pods -n ${{ env.NAMESPACE }} -l app.kubernetes.io/name=gateway
-
-            echo "Deployment status:"
             kubectl get all -n ${{ env.NAMESPACE }} -l app.kubernetes.io/name=gateway
           else
             echo "❌ Application 'gateway' not found in namespace '${{ env.NAMESPACE }}'."
             exit 1
           fi
+
+  verify:
+    needs: [setup, deploy]
+    if: ${{ always() && (inputs.run_verify_only || needs.deploy.result == 'success') }}
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.setup.outputs.tag }}
+      DEPLOYER_VERSION: ${{ needs.setup.outputs.deployer_version }}
+      REGISTRY: ${{ needs.setup.outputs.registry }}
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "Authenticate to Google Cloud"
+        id: "gcp-auth"
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/1053957112592/locations/global/workloadIdentityPools/github-actions-oidc-pool/providers/github-actions-oidc-provider'
+          service_account: 'github-actions-sa@prj-infra-automation-ktbz.iam.gserviceaccount.com'
+          token_format: 'access_token'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>= 363.0.0'
+          install_components: 'kubectl'
+
+      - name: "Docker login to Artifact Registry"
+        uses: docker/login-action@v3
+        with:
+          registry: us-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.gcp-auth.outputs.access_token }}
+
+      - name: "Connect to Dev GKE Cluster"
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: hg-dev-green
+
+      - name: "Update Helm dependencies"
+        run: |
+          cd chart/gateway
+          helm dependency update
+
+      - name: "Run verification using Docker directly"
+        run: |
+          gcloud auth configure-docker --quiet
+          
+          docker create --name mpdev-tmp gcr.io/cloud-marketplace-tools/k8s/dev
+          docker cp mpdev-tmp:/scripts $HOME/marketplace-scripts
+          docker rm mpdev-tmp
+          
+          chmod -R +x $HOME/marketplace-scripts
+          
+          export MPDEV_VERIFY_TIMEOUT=600
+          $HOME/marketplace-scripts/verify \
+            --deployer="${REGISTRY}/deployer:${DEPLOYER_VERSION}" \
+            --verbose
+
+      - name: "Cleanup verification resources"
+        if: always()
+        run: |
+          kubectl get ns -l app.kubernetes.io/name=apptest -o name | xargs -r kubectl delete --wait=false

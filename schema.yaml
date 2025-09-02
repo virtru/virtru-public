@@ -5,7 +5,7 @@ x-google-marketplace:
   applicationApiVersion: v1beta1
   # The published version is required and MUST match the tag
   # of the deployer image
-  publishedVersion: '$TAG' # latest published image tag 
+  publishedVersion: "${TAG}" # latest published image tag
   publishedVersionMetadata:
     releaseNote: >-
       A first release.
@@ -35,7 +35,7 @@ x-google-marketplace:
           type: FULL
           # When deployed through mpdev, the deployer will use the primary image path,
           # add /ubbagent, and arrive at the same path as the default below.
-          default: "gcr.io/virtru-public/gateway/ubbagent:3.19.0"
+          default: "gcr.io/virtru-public/gateway/ubbagent:${TAG}"
           # At this path, there is a copy of "gcr.io/cloud-marketplace-tools/metering/ubbagent:latest"
           # This also effectively pins the ubbagent version, because Virtru is responsible for pushing to this location.
 
@@ -46,7 +46,7 @@ x-google-marketplace:
       gke:
        # todo tune these values to be more appropriate
         nodePool:
-        - numNodes: 2 
+        - numNodes: 2
           machineType: e2-standard-2
     resources:
     - replicas: 2
@@ -75,24 +75,28 @@ properties:
     title: Gateway Hostname
     description: The hostname for the Gateway instance(s)
     type: string
+    default: "gateway-test.example.com"
     x-google-marketplace:
       type: STRING
   gatewayApiTokenName:
     title: Gateway Token ID
     description: The Gateway token ID provided by Virtru
     type: string
+    default: "test-token-name"
     x-google-marketplace:
       type: STRING
   gatewayApiSecret:
     title: Gateway Token Secret
     description: The Gateway token secret provided by Virtru
     type: string
+    default: "test-token-secret"
     x-google-marketplace:
       type: STRING
   primaryMailingDomain:
     title: Primary Mailing Domain
     description: The primary email domain for your organization
     type: string
+    default: "test.example.com"
     x-google-marketplace:
       type: STRING
   amplitudeToken:
@@ -141,6 +145,7 @@ properties:
     title: Number of Seats/Licensed Users
     description: The number of seats/licenses for your organization
     type: string
+    default: "1"
     x-google-marketplace:
       type: STRING
   reportingSecret:
