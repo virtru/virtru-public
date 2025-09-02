@@ -75,24 +75,28 @@ properties:
     title: Gateway Hostname
     description: The hostname for the Gateway instance(s)
     type: string
+    default: "gateway-test.example.com"
     x-google-marketplace:
       type: STRING
   gatewayApiTokenName:
     title: Gateway Token ID
     description: The Gateway token ID provided by Virtru
     type: string
+    default: "test-token-name"
     x-google-marketplace:
       type: STRING
   gatewayApiSecret:
     title: Gateway Token Secret
     description: The Gateway token secret provided by Virtru
     type: string
+    default: "test-token-secret"
     x-google-marketplace:
       type: STRING
   primaryMailingDomain:
     title: Primary Mailing Domain
     description: The primary email domain for your organization
     type: string
+    default: "test.example.com"
     x-google-marketplace:
       type: STRING
   amplitudeToken:
@@ -141,6 +145,7 @@ properties:
     title: Number of Seats/Licensed Users
     description: The number of seats/licenses for your organization
     type: string
+    default: "1"
     x-google-marketplace:
       type: STRING
   reportingSecret:
