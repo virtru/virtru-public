@@ -8,7 +8,7 @@ on:
     paths:
       - 'chart/**'
       - 'schema.yaml'
-      - 'dev.Dockerfile'
+      - 'Dockerfile.installer'
       - 'VERSION'
   repository_dispatch:
     types: [ verify-gateway ]
@@ -75,7 +75,7 @@ jobs:
         uses: docker/build-push-action@v5 # v4.6.0
         with:
           context: .
-          file: dev.Dockerfile
+          file: Dockerfile.installer
           push: true
           build-args: |
             TAG=${{ env.TAG }}
